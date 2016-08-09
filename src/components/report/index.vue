@@ -1,12 +1,16 @@
 <template lang="jade">
-report
+div.report
+  report-form
+  report-preview
 </template>
 <script>
-import Report from './report/index.vue'
+import ReportForm from './form.vue'
+import ReportPreview from './preview.vue'
 
 export default {
   components: {
-    report: Report
+    reportForm: ReportForm,
+    ReportPreview: ReportPreview
   }
 }
 </script>
