@@ -9,13 +9,14 @@ form.form(@submit="send")
     input(v-model="report.date", type="date")
   h2 本周工作
   fieldset.form-control.project(v-for="project of report.projects")
+    a.remove(@click="removeItem(report.projects, project)") x
     legend(v-text="project.title || `未命名项目`")
     label.form-control
       span 项目名称
       input(v-model="project.title")
     ul
       li.task.form-control(v-for="task of project.tasks")
-        a.remove(@click="removeTask(project.tasks, task)") x
+        a.remove(@click="removeItem(project.tasks, task)") x
         label.form-control
           span 标题
           input(v-model="task.title")
@@ -35,9 +36,21 @@ form.form(@submit="send")
     button(type="button", @click="addTask(project.tasks)").add.form-control.block + 添加任务
   button(type="button", @click="addProject").add.form-control.block + 添加项目
   h2 下周计划
-  button(type="button", @click="addProject").add.form-control.block + 添加计划
-  button.form-control 发送
-  button(type="button", @click="save").form-control 保存
+  fieldset.form-control.project(v-for="project of report.projects")
+    legend(v-text="project.title || `未命名项目`")
+    ul
+      li.task.form-control(v-for="task of project.tasks", v-if="task.status!=='已上线'")
+        h5(v-text="task.title")
+        label.form-control
+          span.inline-block 任务计划推迟一周
+          input.inline-block(type="checkbox", v-model="task.delay")
+        label.form-control
+          span 计划说明
+          textarea(v-model="task.plan", rows="3")
+    button(type="button", @click="addPlanTask(project.tasks)").add.form-control.block + 添加计划任务
+  button(type="button", @click="addPlanProject").add.form-control.block + 添加计划项目
+  button(type="button", @click="save").form-control 保存本周周报
+  button(type="button", @click="newReport").form-control 开始写下周周报
 </template>
 
 <script>
@@ -60,17 +73,37 @@ export default {
       tasks.push({
         title: '',
         status: 'Pending',
-        detail: ''
+        detail: '',
+        delay: false,
+        plan: ''
       })
     },
-    removeTask (tasks, task) {
-      tasks.splice(tasks.indexOf(task), 1)
+    addPlanProject () {
+
+    },
+    addPlanTask () {
+
+    },
+    removeItem (list, item) {
+      list.splice(list.indexOf(item), 1)
     },
     save () {
       global.localStorage.setItem('cache', JSON.stringify(this.$data.report))
     },
+    newReport () {
+      ReportStore.dispatch('NEWREPORT')
+    },
     send (e) {
       global.localStorage.setItem('cache', '')
+    },
+    isPlanProjectEmpty (project) {
+      console.log(project)
+      for (const task of project) {
+        if (task.status !== '已上线') {
+          return false
+        }
+      }
+      return true
     }
   }
 }
@@ -80,28 +113,35 @@ export default {
 .form
   left 0
   right 50%
+  h5
+    margin 10px 0
   .form-control
     margin-top 10px
+  .remove
+    display none
+    position absolute
+    right 0
+    top 0
+    width 20px
+    height 20px
+    background red
+    color white
+    text-align center
+    line-height 20px
+    border-radius 100%
   .task
     padding 10px
     background #eee
     position relative
-    .remove
-      display none
-      position absolute
-      right 0
-      top 0
-      width 20px
-      height 20px
-      background red
-      color white
-      text-align center
-      line-height 20px
     &:hover
-      .remove
+      &>.remove
         display block
   fieldset
     margin 0
+    position relative
+    &:hover
+      &>.remove
+        display block
   button
     color white
     padding 10px 20px
@@ -123,4 +163,7 @@ export default {
     textarea
       resize vertical
       rows 3
+    .inline-block
+      display inline-block
+      width auto
 </style>

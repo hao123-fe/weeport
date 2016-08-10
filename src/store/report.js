@@ -15,6 +15,19 @@ const state = cache ? JSON.parse(cache) : {
 const mutations = {
   UPDATEREPORT (state, newState) {
     state = newState
+  },
+  NEWREPORT (state) {
+    const newProjects = []
+    for (const project of state.projects) {
+      const newTasks = []
+      for (const task of project.tasks) {
+        task.status !== '已上线' && newTasks.push(task)
+        task.detail = ''
+      }
+      project.tasks = newTasks
+      newTasks.length !== 0 && newProjects.push(project)
+    }
+    state.projects = newProjects
   }
 }
 
