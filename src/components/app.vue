@@ -11,6 +11,9 @@ export default {
 }
 </script>
 <style lang="stylus">
+html, body
+  margin 0
+  padding 0
 *
   box-sizing border-box
 ul
