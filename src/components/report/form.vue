@@ -7,6 +7,7 @@ form.form(@submit="send")
   label.form-control
     span 时间
     input(v-model="report.date", type="date", @change="getReport")
+  button(type="button", @click="addProject").add.form-control.block + 添加项目
   h2 本周工作
   fieldset.form-control.project(v-for="project of report.projects")
     h4.legend
@@ -18,8 +19,8 @@ form.form(@submit="send")
         span 项目名称
         input(v-model="project.title")
       ul
-        list-item.task.form-control(v-for="task of project.tasks", :show="!!task.title")
-          h5(slot="header").title
+        list-item.task.form-control(v-for="task of project.tasks", :show="!!task.title", v-if="task.status!=='计划中'")
+          h5.title(slot="header")
             span(v-text="`${task.title || '* 未命名任务'}`")
             a.remove(@click="removeItem(project.tasks, task)")
               icon(name="times")
@@ -41,32 +42,36 @@ form.form(@submit="send")
               span 详细
               textarea(v-model="task.detail", rows="3")
       button(type="button", @click="addTask(project.tasks)").add.form-control.block + 添加任务
-  button(type="button", @click="addProject").add.form-control.block + 添加项目
   h2 下周计划
   fieldset.form-control.project(v-for="project of report.projects")
-    h4.legend(v-text="`${project.title || '* 未命名任务'}`")
+    h4.legend(v-text="`${project.title || '* 未命名项目'}`")
     div.editor
       ul
         list-item.task.form-control(v-for="task of project.tasks", v-if="task.status!=='已上线'", :show="!!task.plan")
-          h5.title(slot="header", v-text="`${task.title || '* 未命名任务'}`")
+          h5.title(slot="header")
+            span(v-text="`${task.title || '* 未命名计划'}`")
+            a.remove(@click="removeItem(project.tasks, task)", v-if="task.status==='计划中'")
+              icon(name="times")
           div.editor
-            label.form-control
+            label.form-control(v-if="task.status==='计划中'")
+              span 计划标题
+              input(v-model="task.title")
+            label.form-control(v-if="task.status!=='计划中'")
               span.inline-block 任务计划推迟一周
               input.inline-block(type="checkbox", v-model="task.delay")
             label.form-control
               span 计划说明
               textarea(v-model="task.plan", rows="3")
       button(type="button", @click="addPlanTask(project.tasks)").add.form-control.block + 添加计划任务
-  button(type="button", @click="addPlanProject").add.form-control.block + 添加计划项目
-  button(type="button", @click="save").form-control 保存本周周报
-  button(type="button", @click="newReport").form-control 开始写下周周报
+  button(type="button", @click="save").form-control 保存
 </template>
 
 <script>
 import ReportStore from '../../store/report.js'
 import ListItem from './list-item.vue'
 import Icon from 'vue-awesome'
-import week from 'week'
+// import week from 'week'
+import week from '../../lib/week.js'
 export default {
   components: {
     listItem: ListItem,
@@ -80,6 +85,12 @@ export default {
   computed: {
     reportKey () {
       const date = new Date(this.report.date)
+      const currentWeek = week(date)
+      if (!+currentWeek) {
+        date.setFullYear(date.getFullYear() - 1)
+        date.setMonth(11)
+        date.setDate(31)
+      }
       return `${date.getFullYear()}_${week(date)}`
     }
   },
@@ -100,17 +111,20 @@ export default {
         plan: ''
       })
     },
-    addPlanProject () {
-
-    },
-    addPlanTask () {
-
+    addPlanTask (tasks) {
+      tasks.push({
+        title: '',
+        status: '计划中',
+        detail: '',
+        delay: false,
+        plan: ''
+      })
     },
     removeItem (list, item) {
       list.splice(list.indexOf(item), 1)
     },
     save () {
-      global.localStorage.setItem('cache', JSON.stringify(this.$data.report))
+      global.localStorage.setItem(this.reportKey, JSON.stringify(this.$data.report))
     },
     newReport () {
       global.localStorage.setItem(this.reportKey, JSON.stringify(this.$data.report))
@@ -120,7 +134,12 @@ export default {
       global.localStorage.setItem('cache', '')
     },
     getReport (e) {
-      console.log(e.target.value)
+      const data = JSON.parse(global.localStorage.getItem(this.reportKey))
+      if (data) {
+        ReportStore.dispatch('UPDATEREPORT', data)
+      } else {
+        ReportStore.dispatch('NEWREPORT')
+      }
     }
     // isPlanProjectEmpty (project) {
     //   for (const task of project) {

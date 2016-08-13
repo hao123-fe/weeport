@@ -3,13 +3,13 @@ div.preview
   article
     h1
       span(v-text="`${report.title}`")
-      span(v-if="week", v-text="`【${week}】`")
+    span(v-if="week", v-text="`${week}`")
     hr
     h2 本周工作
     div(v-for="project of report.projects")
       h3(v-text="project.title", style="color: orange")
       ul(style="font-size: 14px;")
-        li(v-for="task of project.tasks")
+        li(v-for="task of project.tasks", v-if="task.status!=='计划中'")
           h4.work-title
             span.status(v-text="`${task.status}`")
             span(v-text="task.title")
@@ -20,7 +20,7 @@ div.preview
     div(v-for="project of report.projects")
       h3(v-text="project.title", style="color: orange")
       ul(style="font-size: 14px;")
-        li(v-for="task of project.tasks", v-if="task.status!=='已上线' && !task.delay")
+        li(v-for="task of project.tasks", v-if="task.status!=='已上线' && !task.delay && task.title")
           h4.work-title
             span(v-text="`·${task.title}`")
           div.detail
@@ -32,7 +32,8 @@ div.preview
 
 <script>
 import ReportStore from '../../store/report.js'
-import week from 'week'
+// import week from 'week'
+import week from '../../lib/week.js'
 export default {
   data () {
     return {
@@ -40,9 +41,26 @@ export default {
     }
   },
   computed: {
+    dateRange () {
+      const startDate = new Date(this.report.date)
+      const endDate = new Date(this.report.date)
+      const day = (new Date(this.report.date)).getDay()
+      startDate.setDate(startDate.getDate() - day)
+      endDate.setDate(endDate.getDate() + 7 - day - 1)
+      return {
+        start: `${startDate.getFullYear()}/${startDate.getMonth() + 1}/${startDate.getDate()}`,
+        end: `${endDate.getFullYear()}/${endDate.getMonth() + 1}/${endDate.getDate()}`
+      }
+    },
     week () {
       const date = new Date(this.report.date)
-      return this.report.date ? `${date.getFullYear()}年第${week(date)}周` : ''
+      const currentWeek = week(date)
+      if (!+currentWeek) {
+        date.setFullYear(date.getFullYear() - 1)
+        date.setMonth(11)
+        date.setDate(31)
+      }
+      return `${date.getFullYear()}年第${week(date)}周 （${this.dateRange.start} - ${this.dateRange.end}）`
     }
   }
 }
