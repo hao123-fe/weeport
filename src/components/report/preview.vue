@@ -41,6 +41,9 @@ export default {
     }
   },
   computed: {
+    inPlan () {
+
+    },
     dateRange () {
       const startDate = new Date(this.report.date)
       const endDate = new Date(this.report.date)
@@ -73,7 +76,7 @@ export default {
   right 0
   font-color #444
   .detail
-    white-space pre-wrap
+    // white-space pre-wrap
     padding-left 20px
   .extra
     font-size 12px
