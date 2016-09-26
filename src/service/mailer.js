@@ -17,7 +17,7 @@ export default function (options) {
     subject: options.title, // Subject line
     html: options.content // html body
   }
-
+  
   transporter.sendMail(mailOptions, function(error, info){
       if(error){
           return console.log(error);

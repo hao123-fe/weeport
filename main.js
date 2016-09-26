@@ -11,7 +11,7 @@ app.on('window-all-closed', function() {
 
 app.on('ready', function() {
   mainWindow = new BrowserWindow()
-  mainWindow.loadURL(`file://${__dirname}/page/index.html`)
+  mainWindow.loadURL(`file://${__dirname}/app/index.html`)
 
   mainWindow.on('closed', function() {
     mainWindow = null
