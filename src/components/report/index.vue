@@ -17,7 +17,7 @@ export default {
 <style lang="stylus" scoped>
 .report
   position absolute
-  top 0
+  top 52px
   bottom 0
   left 0
   right 0
