@@ -1,6 +1,6 @@
 <template lang="jade">
 header
-  a.logo
+  a.logo(v-link="{path: '/'}")
     img(src="../../assets/logo.png")
   n3-nav
     n3-nav-item(v-link="{path: '/report', activeClass: 'n3-navbar-active'}")
@@ -27,11 +27,13 @@ export default {
 </script>
 <style lang="stylus" scoped>
 header
+  user-select none
   position fixed
   width 100%
   top 0
   background white
   z-index 100
+  box-shadow 0 0 5px silver
 .logo
   height 52px
   float left

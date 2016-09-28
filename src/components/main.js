@@ -4,6 +4,7 @@ import App from './App'
 import Settings from './settings/index.vue'
 import Preview from './preview/index.vue'
 import Report from './report/index.vue'
+import Editor from './editor/index.vue'
 
 Vue.use(VueRouter)
 
@@ -11,7 +12,7 @@ const router = new VueRouter()
 
 router.map({
   '/': {
-    component: Report
+    component: Editor
   },
   '/report': {
     component: Report
