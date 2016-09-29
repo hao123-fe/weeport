@@ -3,25 +3,42 @@ div
   n3-row
     n3-column(:col="12")
       div.report-header
-        span.title(v-text="title")
-        span.title(v-text="week")
         n3-datepicker.date(placeholder="日期", :value.sync="date", width="100px")
-        n3-button.pull-right(type="primary") 发送
+        n3-button.pull-right(type="primary") 发送周报&nbsp;
+          n3-icon(type="envelope")
   n3-row
     n3-column(:col="12")
+      article.preview
+        h2
+          span(v-text="title")
+          span(v-text="week")
+        h3(v-if="currentProject && !!currentProject.length") 本周工作
+        ul
+          li(v-for="project of currentReport")
+            h4(v-text="project.name || '未命名项目'")
+            ul
+              li(v-for="task of project.tasks")
+                h5(v-text="task.name || '未命名任务'")
+                ul
+                  li(v-for="point of task.progress")
+                    span(v-text="status[point.state].text")
+                    span(v-text="point.detail")
+        h3(v-if="currentPlan && !!currentPlan.length") 下周计划
 </template>
 <script>
-import {n3Row, n3Column, n3Form, n3FormItem, n3Input, n3Button, n3Tabs, n3Tab, n3Datepicker} from 'N3-Components'
+import {n3Row, n3Column, n3Form, n3FormItem, n3Input, n3Button, n3Tabs, n3Tab, n3Datepicker, n3Icon} from 'N3-Components'
+import status from '../../lib/task-status.js'
 import week from '../../lib/week.js'
 
 export default {
   data () {
     const ls = global.localStorage
-    const currentDate = new Date()
     return {
       title: ls.getItem('reportTitle') || '未命名周报',
-      projectName: '未命名项目',
-      date: `${currentDate.getFullYear()}-${currentDate.getMonth()}-${currentDate.getDate()}`
+      date: this.transDate(new Date()),
+      output: '',
+      projects: JSON.parse(ls.getItem('projects')) || [],
+      status: status
     }
   },
   components: {
@@ -33,9 +50,66 @@ export default {
     n3Button: n3Button,
     n3Tabs: n3Tabs,
     n3Tab: n3Tab,
-    n3Datepicker: n3Datepicker
+    n3Datepicker: n3Datepicker,
+    n3Icon: n3Icon
+  },
+  methods: {
+    transDate (date) {
+      const year = date.getFullYear()
+      const month = (month => {
+        let ret = (month + 1).toString()
+        return ret.length === 1 ? '0' + ret : ret
+      })(date.getMonth())
+      const day = (date => {
+        let ret = date.toString()
+        return ret.length === 1 ? '0' + ret : ret
+      })(date.getDate())
+      return `${year}-${month}-${day}`
+    }
   },
   computed: {
+    currentPlan () {
+      return []
+    },
+    currentReport () {
+      const newProjects = []
+      for (const project of this.projects) {
+        const tasks = project.tasks
+        const newTasks = []
+        for (const task of tasks) {
+          const progress = task.progress
+          const newProgress = []
+          for (const point of progress) {
+            const date = new Date(point.date)
+            if (date > this.dateRange.start && date < this.dateRange.end) {
+              newProgress.push(point)
+            }
+          }
+          if (newProgress.length) {
+            task.progress = newProgress
+            newTasks.push(task)
+          }
+        }
+        if (newTasks.length) {
+          project.tasks = tasks
+          newProjects.push(project)
+        }
+      }
+      return newProjects
+    },
+    taskInWeek (progress, dateRange) {
+      if (!progress.length) {
+        return true
+      }
+      if (!(progress[0].state === 'COMPLETED' || progress[0].state === 'DEPLOYED' || progress[0].state === 'ENDED')) {
+        const date = new Date(progress[0].date)
+        return date <= dateRange.end
+      }
+      for (const point of progress) {
+        const date = new Date(point.date)
+        return date > dateRange.start && date <= dateRange.end
+      }
+    },
     dateRange () {
       const startDate = new Date(this.date)
       const endDate = new Date(this.date)
@@ -43,8 +117,8 @@ export default {
       startDate.setDate(startDate.getDate() - day)
       endDate.setDate(endDate.getDate() + 7 - day - 1)
       return {
-        start: `${startDate.getFullYear()}/${startDate.getMonth() + 1}/${startDate.getDate()}`,
-        end: `${endDate.getFullYear()}/${endDate.getMonth() + 1}/${endDate.getDate()}`
+        start: startDate,
+        end: endDate
       }
     },
     week () {
@@ -55,7 +129,7 @@ export default {
         date.setMonth(11)
         date.setDate(31)
       }
-      return `${date.getFullYear()}年第${week(date)}周 （${this.dateRange.start} - ${this.dateRange.end}）`
+      return `${date.getFullYear()}年第${week(date)}周 （${this.transDate(this.dateRange.start)} 至 ${this.transDate(this.dateRange.end)}）`
     }
   }
 }
@@ -69,4 +143,7 @@ export default {
     vertical-align middle
     font-size 20px
     margin-right 10px
+.preview
+  padding 0 40px
+  margin-bottom 40px
 </style>

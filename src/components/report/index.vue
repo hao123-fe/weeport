@@ -17,16 +17,17 @@ div
         h4 项目
         n3-form-item(label="项目名称", need)
           n3-input(:value.sync="currentProject.name")
-        n3-form-item(label="任务")
-          n3-button(type="primary", @click="addTask(currentProject)") 添加任务&nbsp;
-            n3-icon(type="plus")
         hr
-        h4 任务列表
+      n3-form.task-list
+        h4 任务列表&nbsp
+        a.add-task(type="primary", @click="addTask(currentProject)") 添加任务&nbsp;
+          n3-icon(type="plus")
         n3-accordion.tasks(:one-at-atime="true")
           n3-panel(v-for="task of currentProject.tasks", v-if="taskInWeek(task.progress, dateRange)")
             div(slot="header")
-              n3-checkbox(@click.stop="prevent")
               span(v-text="`${task.name || '未命名任务'}`")
+              n3-icon.completed(type="check", v-if="isCompleted(task.progress[0])")
+              n3-icon.ended(type="times", v-if="isEnded(task.progress[0])")
               n3-icon.remove.pull-right(type="remove", @click.stop="removeTask(task, currentProject.tasks)")
             n3-form-item(label="任务名称")
               n3-input(:value.sync="task.name")
@@ -90,12 +91,19 @@ export default {
     }
   },
   methods: {
+    isCompleted (point) {
+      return point.state === 'COMPLETED' || point.state === 'DEPLOYED'
+    },
+    isEnded (point) {
+      return point.state === 'ENDED'
+    },
     taskInWeek (progress, dateRange) {
       if (!progress.length) {
         return true
       }
       if (!(progress[0].state === 'COMPLETED' || progress[0].state === 'DEPLOYED' || progress[0].state === 'ENDED')) {
-        return true
+        const date = new Date(progress[0].date)
+        return date <= dateRange.end
       }
       for (const point of progress) {
         const date = new Date(point.date)
@@ -128,7 +136,12 @@ export default {
     addTask (project) {
       project.tasks.unshift({
         name: '',
-        progress: []
+        progress: [
+          {
+            state: 'PENDING',
+            date: this.date
+          }
+        ]
       })
     },
     addProgress (task) {
@@ -203,6 +216,7 @@ export default {
   padding 100px 0
   font-size 48px
   color #eee
+.task-list
 .tasks
   .n3-panel-heading
     .remove
@@ -218,7 +232,7 @@ export default {
       font-size 16px
       vertical-align middle
     .detail
-      padding 10px 0
+      padding 10px 0 0
       color #444
   .progress
     .state
@@ -233,6 +247,15 @@ export default {
     .add
       border-top-left-radius 0
       border-bottom-left-radius 0
+  .completed, .ended
+    margin-left 5px
+  .completed
+    color #2ecc71
+  .ended
+    color #e74c3c
+  .add-task
+    display block
+    padding 10px 15px
 .project
   .n3-panel-collapse.collapse-transition
     overflow visible

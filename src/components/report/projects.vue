@@ -27,11 +27,21 @@ export default {
       }
       return countB - countA
     },
+    checkTaskState (task) {
+      const progress = task.progress
+      if (progress.length) {
+        return !(progress[0].state === 'COMPLETED' || progress[0].state === 'DEPLOYED' || progress[0].state === 'ENDED')
+      } else {
+        return true
+      }
+    },
     projectLabel (project) {
       let count = 0
       const tasks = project.tasks
       for (const task of tasks) {
-        task && count++
+        if (this.checkTaskState(task)) {
+          count++
+        }
       }
       if (count) {
         return `${(project.name || '未命名项目')} (${count})`
