@@ -16,18 +16,18 @@ div
       n3-form
         h4 项目
         n3-form-item(label="项目名称", need)
-          n3-input(:value.sync="projects[currentProject].name")
+          n3-input(:value.sync="currentProject.name")
         n3-form-item(label="任务")
-          n3-button(type="primary", @click="addTask(projects[currentProject])") 添加任务&nbsp;
+          n3-button(type="primary", @click="addTask(currentProject)") 添加任务&nbsp;
             n3-icon(type="plus")
         hr
         h4 任务列表
         n3-accordion.tasks(:one-at-atime="true")
-          n3-panel(v-for="task of projects[currentProject].tasks", v-if="taskInWeek(task.progress, dateRange)")
+          n3-panel(v-for="task of currentProject.tasks", v-if="taskInWeek(task.progress, dateRange)")
             div(slot="header")
               n3-checkbox(@click.stop="prevent")
               span(v-text="`${task.name || '未命名任务'}`")
-              n3-icon.remove.pull-right(type="remove", @click.stop="removeTask(task, projects[currentProject].tasks)")
+              n3-icon.remove.pull-right(type="remove", @click.stop="removeTask(task, currentProject.tasks)")
             n3-form-item(label="任务名称")
               n3-input(:value.sync="task.name")
             n3-form-item.progress(label="时间节点")
@@ -116,12 +116,13 @@ export default {
     },
     addProject () {
       if (this.search) {
-        this.projects.unshift({
+        const project = {
           name: this.search,
           tasks: []
-        })
+        }
+        this.projects.unshift(project)
         this.search = ''
-        this.currentProject = 0
+        this.currentProject = project
       }
     },
     addTask (project) {
@@ -142,8 +143,8 @@ export default {
       const index = tasks.indexOf(task)
       tasks.splice(index, 1)
     },
-    selectProject (index) {
-      this.currentProject = index
+    selectProject (project) {
+      this.currentProject = project
     },
     save () {
       const ls = global.localStorage

@@ -1,8 +1,8 @@
 <template lang="jade">
 n3-column(:col="col")
-  n3-nav(:on-change="selectProject", type="vertical")
-    n3-nav-item(v-for="project of projects", :active="current === $index", @click="selectProject($index)", v-if="!search || ~project.name.indexOf(search)")
-      a(v-text="project.name || '未命名项目'")
+  n3-nav(type="vertical")
+    n3-nav-item(v-for="project of projects | orderBy orderByTasks", :active="current === project", @click="selectProject(project)", v-if="!search || ~project.name.indexOf(search)")
+      a(v-text="projectLabel(project)")
 </template>
 <script>
 import {n3Nav, n3NavItem, n3Column} from 'N3-Components'
@@ -12,6 +12,33 @@ export default {
     n3Nav: n3Nav,
     n3NavItem: n3NavItem,
     n3Column: n3Column
+  },
+  methods: {
+    orderByTasks (a, b) {
+      let countA = 0
+      let countB = 0
+      const tasksA = a.tasks
+      const tasksB = b.tasks
+      for (const taskA of tasksA) {
+        taskA && countA++
+      }
+      for (const taskB of tasksB) {
+        taskB && countB++
+      }
+      return countB - countA
+    },
+    projectLabel (project) {
+      let count = 0
+      const tasks = project.tasks
+      for (const task of tasks) {
+        task && count++
+      }
+      if (count) {
+        return `${(project.name || '未命名项目')} (${count})`
+      } else {
+        return `${(project.name || '未命名项目')}`
+      }
+    }
   }
 }
 </script>
