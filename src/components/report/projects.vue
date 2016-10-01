@@ -1,15 +1,17 @@
 <template lang="jade">
-n3-nav(:on-change="selectProject", type="vertical")
-  n3-nav-item(v-for="project of projects", :active="current === $index", @click="selectProject($index)", v-if="!search || ~project.name.indexOf(search)")
-    a(v-text="project.name || '未命名项目'")
+n3-column(:col="col")
+  n3-nav(:on-change="selectProject", type="vertical")
+    n3-nav-item(v-for="project of projects", :active="current === $index", @click="selectProject($index)", v-if="!search || ~project.name.indexOf(search)")
+      a(v-text="project.name || '未命名项目'")
 </template>
 <script>
-import {n3Nav, n3NavItem} from 'N3-Components'
+import {n3Nav, n3NavItem, n3Column} from 'N3-Components'
 export default {
-  props: ['projects', 'select-project', 'current', 'search'],
+  props: ['projects', 'select-project', 'current', 'search', 'col'],
   components: {
     n3Nav: n3Nav,
-    n3NavItem: n3NavItem
+    n3NavItem: n3NavItem,
+    n3Column: n3Column
   }
 }
 </script>
