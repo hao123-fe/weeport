@@ -8,22 +8,27 @@ div
           n3-icon(type="envelope")
   n3-row
     n3-column(:col="12")
-      article.preview
+      article.mail(v-el:"mail")
         h2
           span(v-text="title")
           span(v-text="week")
-        h3(v-if="currentProject && !!currentProject.length") 本周工作
+        hr
+        h3(v-if="hasReport") 本周工作
         ul
           li(v-for="project of currentReport")
             h4(v-text="project.name || '未命名项目'")
             ul
               li(v-for="task of project.tasks")
-                h5(v-text="task.name || '未命名任务'")
+                h5
+                  span.state(v-text="status[task.progress[0].state].text", :style="{backgroundColor: status[task.progress[0].state].color}")
+                  span.name(v-text="task.name || '未命名任务'")
                 ul
-                  li(v-for="point of task.progress")
-                    span(v-text="status[point.state].text")
-                    span(v-text="point.detail")
-        h3(v-if="currentPlan && !!currentPlan.length") 下周计划
+                  li.point(v-for="point of task.progress")
+                    span.state(v-text="`${status[point.state].text}`")
+                    span.date(v-text="point.date")
+                    p(v-text="point.detail")
+            hr
+        h3(v-if="hasPlan") 下周计划
 </template>
 <script>
 import {n3Row, n3Column, n3Form, n3FormItem, n3Input, n3Button, n3Tabs, n3Tab, n3Datepicker, n3Icon} from 'N3-Components'
@@ -54,6 +59,10 @@ export default {
     n3Icon: n3Icon
   },
   methods: {
+    getMailHTML () {
+      const el = this.$els.mail
+      return el.innerHTML
+    },
     transDate (date) {
       const year = date.getFullYear()
       const month = (month => {
@@ -68,6 +77,12 @@ export default {
     }
   },
   computed: {
+    hasReport () {
+      return !!this.currentReport.length
+    },
+    hasPlan () {
+      return !!this.currentPlan.length
+    },
     currentPlan () {
       return []
     },
@@ -143,7 +158,30 @@ export default {
     vertical-align middle
     font-size 20px
     margin-right 10px
-.preview
+.mail
   padding 0 40px
   margin-bottom 40px
+  h3
+    color #333
+  h4
+    color orange
+    border-left 2px solid orange
+    text-indent 10px
+    margin 20px 0
+    padding 3px 0
+  h5
+    .state
+      color white
+      padding 3px 5px
+      border-radius 5px
+      margin-right 5px
+  .point
+    padding 5px 0
+    margin-left 32px
+    .state
+      border 1px solid #666
+      color #666
+      padding 0 2px
+      border-radius 5px
+      margin-right 5px
 </style>

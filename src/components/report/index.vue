@@ -66,8 +66,7 @@ export default {
       },
       progress: {
         state: defaultState,
-        detail: '',
-        date: date
+        detail: ''
       },
       defaultState: defaultState,
       status: status,
@@ -148,7 +147,7 @@ export default {
       task.progress.unshift({
         state: this.progress.state,
         detail: this.progress.detail,
-        date: this.progress.date
+        date: this.date
       })
       this.progress.detail = ''
     },
