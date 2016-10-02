@@ -4,11 +4,11 @@ div
     n3-column(:col="12")
       div.report-header
         n3-datepicker.date(placeholder="日期", :value.sync="date", width="100px")
-        n3-button.pull-right(type="primary") 发送周报&nbsp;
+        n3-button.pull-right(type="primary", @click="getMailHTML") 发送周报&nbsp;
           n3-icon(type="envelope")
   n3-row
     n3-column(:col="12")
-      article.mail(v-el:"mail")
+      div.mail(v-el:"mail")
         h2
           span(v-text="title")
           span(v-text="week")
@@ -28,12 +28,23 @@ div
                     span.date(v-text="point.date")
                     p(v-text="point.detail")
             hr
-        h3(v-if="hasPlan") 下周计划
 </template>
 <script>
 import {n3Row, n3Column, n3Form, n3FormItem, n3Input, n3Button, n3Tabs, n3Tab, n3Datepicker, n3Icon} from 'N3-Components'
 import status from '../../lib/task-status.js'
 import week from '../../lib/week.js'
+
+const styleKeys = [
+  'border',
+  'margin',
+  'padding',
+  'background',
+  'width',
+  'height',
+  'lineHeight',
+  'textIndent',
+  'font'
+]
 
 export default {
   data () {
@@ -59,9 +70,23 @@ export default {
     n3Icon: n3Icon
   },
   methods: {
+    walkMailNode (root) {
+      const newRoot = document.createElement(root.tagName)
+      const style = global.getComputedStyle(root)
+      for (const key of styleKeys) {
+        newRoot.style[key] = style[key]
+      }
+
+      for (const el of root.children) {
+        const newEl = this.walkMailNode(el)
+        newRoot.appendChild(newEl)
+      }
+      return newRoot
+    },
     getMailHTML () {
       const el = this.$els.mail
-      return el.innerHTML
+      const mailStr = this.walkMailNode(el).innerHTML
+      return mailStr
     },
     transDate (date) {
       const year = date.getFullYear()
@@ -80,12 +105,6 @@ export default {
     hasReport () {
       return !!this.currentReport.length
     },
-    hasPlan () {
-      return !!this.currentPlan.length
-    },
-    currentPlan () {
-      return []
-    },
     currentReport () {
       const newProjects = []
       for (const project of this.projects) {
@@ -94,9 +113,13 @@ export default {
         for (const task of tasks) {
           const progress = task.progress
           const newProgress = []
+          const lastPoint = progress[0]
+          if (lastPoint.state !== 'COMPLETED' && lastPoint.state !== 'DEPLOYED' && lastPoint.state !== 'ENDED' && new Date(lastPoint.date) < this.dateRange.start) {
+            newProgress.push(lastPoint)
+          }
           for (const point of progress) {
             const date = new Date(point.date)
-            if (date > this.dateRange.start && date < this.dateRange.end) {
+            if (date >= this.dateRange.start && date < this.dateRange.end) {
               newProgress.push(point)
             }
           }

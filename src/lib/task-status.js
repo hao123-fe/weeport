@@ -1,13 +1,14 @@
 const color = {
+  DEFAULT: '#777',
   SUCCESS: '#2ecc71',
   INFO: '#3498db',
-  WARNING: '#e74c3c',
+  WARNING: '#f0ad4e',
   DANGER: '#e74c3c'
 }
 
 export default {
-  PENDING: {text: '待定中', color: color.INFO},
-  PLANNING: {text: '计划中', color: color.INFO},
+  PENDING: {text: '待定中', color: color.DEFAULT},
+  PLANNING: {text: '计划中', color: color.DEFAULT},
   DEMANDING: {text: '需求中', color: color.INFO},
   DEVELOPING: {text: '开发中', color: color.INFO},
   TESTING: {text: '已提测', color: color.INFO},
@@ -15,6 +16,6 @@ export default {
   DEPLOYED: {text: '已上线', color: color.SUCCESS},
   EXCUTING: {text: '执行中', color: color.INFO},
   ENDED: {text: '已终止', color: color.DANGER},
-  SUSPENDED: {text: '已延期', color: color.WARNING},
+  DELAY: {text: '已延期', color: color.WARNING},
   COMPLETED: {text: '已完成', color: color.SUCCESS}
 }
