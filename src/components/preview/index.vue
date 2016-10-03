@@ -1,5 +1,7 @@
 <template lang="jade">
 div
+  n3-alert(type="success", message="发送周报", placement="top", :show.sync="alert.sendSuccess", :duration="2000") 发送成功！
+  n3-alert(type="danger", message="发送周报", placement="top", :show.sync="alert.sendFail", :duration="2000") 发送失败，请重试。
   n3-row
     n3-column(:col="12")
       div.report-header
@@ -13,7 +15,6 @@ div
           span(v-text="title")
           span(v-text="week")
         hr
-        h3(v-if="hasReport") 本周工作
         ul
           li(v-for="project of currentReport")
             h4(v-text="project.name || '未命名项目'")
@@ -30,26 +31,38 @@ div
             hr
 </template>
 <script>
-import {n3Row, n3Column, n3Form, n3FormItem, n3Input, n3Button, n3Tabs, n3Tab, n3Datepicker, n3Icon} from 'N3-Components'
+import {n3Row, n3Column, n3Form, n3FormItem, n3Input, n3Button, n3Tabs, n3Tab, n3Datepicker, n3Icon, n3Alert} from 'N3-Components'
 import status from '../../lib/task-status.js'
 import week from '../../lib/week.js'
+
+const mailer = global.require ? global.require('../src/service/mailer.js') : function (options, callback) {
+  console.log(options.content)
+  callback && callback(true, '')
+}
 
 const styleKeys = [
   'border',
   'margin',
   'padding',
   'background',
-  'width',
   'height',
   'lineHeight',
   'textIndent',
-  'font'
+  'font',
+  'borderRadius',
+  'borderLeft',
+  'listStyle',
+  'color'
 ]
 
 export default {
   data () {
     const ls = global.localStorage
     return {
+      alert: {
+        sendSuccess: false,
+        sendFail: false
+      },
       title: ls.getItem('reportTitle') || '未命名周报',
       date: this.transDate(new Date()),
       output: '',
@@ -67,16 +80,19 @@ export default {
     n3Tabs: n3Tabs,
     n3Tab: n3Tab,
     n3Datepicker: n3Datepicker,
-    n3Icon: n3Icon
+    n3Icon: n3Icon,
+    n3Alert: n3Alert
   },
   methods: {
     walkMailNode (root) {
       const newRoot = document.createElement(root.tagName)
       const style = global.getComputedStyle(root)
+      if (root.firstChild && root.firstChild.nodeName === '#text') {
+        newRoot.textContent = root.firstChild.textContent
+      }
       for (const key of styleKeys) {
         newRoot.style[key] = style[key]
       }
-
       for (const el of root.children) {
         const newEl = this.walkMailNode(el)
         newRoot.appendChild(newEl)
@@ -84,9 +100,25 @@ export default {
       return newRoot
     },
     getMailHTML () {
+      const ls = global.localStorage
       const el = this.$els.mail
       const mailStr = this.walkMailNode(el).innerHTML
-      return mailStr
+      mailer({
+        username: ls.getItem('username'),
+        password: ls.getItem('password'),
+        to: ls.getItem('sendTo'),
+        cc: ls.getItem('cc'),
+        title: `${this.title} ${this.week}`,
+        content: mailStr
+      }, (error, info) => {
+        this.alert.sendSuccess = !error
+        this.alert.sendFail = error
+        if (error) {
+          console.log(error)
+        } else {
+          console.log('Message sent: ' + info.response)
+        }
+      })
     },
     transDate (date) {
       const year = date.getFullYear()
