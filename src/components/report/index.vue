@@ -41,16 +41,13 @@ div
             n3-form-item.timeline
               n3-timeline
                 n3-timeline-item(v-for="progress of task.progress", :color="status[progress.state].color")
-                  a
-                    n3-label(:hover="false")
-                      span(v-text="status[progress.state].text")
-                    span.date(v-text="progress.date")
-                    p.detail(v-text="progress.detail")
+                  timeline-item(:status="status", :progress="progress")
     n3-column(:col="9", v-if="currentProject === null")
       div.report-empty 请选择或新建一个项目
 </template>
 <script>
-import Projects from './Projects.vue'
+import Projects from './projects.vue'
+import TimelineItem from './timeline-item.vue'
 import status from '../../lib/task-status.js'
 import {n3Row, n3Column, n3Form, n3FormItem, n3Input, n3Checkbox, n3Button, n3Select, n3Option, n3Label, n3Tabs, n3Tab, n3Datepicker, n3Icon, n3Alert, n3Accordion, n3Panel, n3Timeline, n3TimelineItem} from 'N3-Components'
 
@@ -147,7 +144,7 @@ export default {
       task.progress.unshift({
         state: this.progress.state,
         detail: this.progress.detail,
-        date: this.date
+        date: this.transDate(new Date())
       })
       this.progress.detail = ''
     },
@@ -171,6 +168,7 @@ export default {
   },
   components: {
     projects: Projects,
+    timelineItem: TimelineItem,
     n3Checkbox: n3Checkbox,
     n3Label: n3Label,
     n3Alert: n3Alert,
@@ -225,14 +223,6 @@ export default {
     & a:hover
       .remove
         opacity 1
-  .timeline
-    .date
-      margin-left 10px
-      font-size 16px
-      vertical-align middle
-    .detail
-      padding 10px 0 0
-      color #444
   .progress
     .state
       .n3-dropdown-toggle

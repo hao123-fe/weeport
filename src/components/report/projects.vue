@@ -20,10 +20,10 @@ export default {
       const tasksA = a.tasks
       const tasksB = b.tasks
       for (const taskA of tasksA) {
-        taskA && countA++
+        this.checkTaskState(taskA) && countA++
       }
       for (const taskB of tasksB) {
-        taskB && countB++
+        this.checkTaskState(taskB) && countB++
       }
       return countB - countA
     },
