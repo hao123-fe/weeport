@@ -24,7 +24,7 @@ div
                   span.state(v-text="status[task.progress[0].state].text", :style="{backgroundColor: status[task.progress[0].state].color}")
                   span.name(v-text="task.name || '未命名任务'")
                 ul
-                  li.point(v-for="point of task.progress")
+                  li.point(v-for="point of task.progress", track-by="$index")
                     span.state(v-text="`${status[point.state].text}`")
                     span.date(v-text="point.date")
                     p(v-text="point.detail")
@@ -146,23 +146,31 @@ export default {
           const progress = task.progress
           const newProgress = []
           const lastPoint = progress[0]
-          if (lastPoint.state !== 'COMPLETED' && lastPoint.state !== 'DEPLOYED' && lastPoint.state !== 'ENDED' && new Date(lastPoint.date) < this.dateRange.start) {
+          const lastDate = new Date(lastPoint.date)
+          if (lastPoint.state !== 'COMPLETED' && lastPoint.state !== 'DEPLOYED' && lastPoint.state !== 'ENDED' && lastDate < this.dateRange.start) {
             newProgress.push(lastPoint)
-          }
-          for (const point of progress) {
-            const date = new Date(point.date)
-            if (date >= this.dateRange.start && date < this.dateRange.end) {
-              newProgress.push(point)
+          } else {
+            for (const point of progress) {
+              const date = new Date(point.date)
+              const index = progress.indexOf(point)
+              if (index === 0 && (point.state === 'COMPLETED' || point.state === 'DEPLOYED' || point.state === 'ENDED') && date < this.dateRange.start) {
+                break
+              }
+              if (date >= this.dateRange.start && date < this.dateRange.end) {
+                newProgress.push(Object.assign({}, point))
+              }
             }
           }
           if (newProgress.length) {
-            task.progress = newProgress
-            newTasks.push(task)
+            const newTask = Object.assign({}, task)
+            newTask.progress = newProgress
+            newTasks.push(newTask)
           }
         }
         if (newTasks.length) {
-          project.tasks = newTasks
-          newProjects.push(project)
+          const newProject = Object.assign({}, project)
+          newProject.tasks = newTasks
+          newProjects.push(newProject)
         }
       }
       return newProjects
