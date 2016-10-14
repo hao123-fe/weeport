@@ -1,5 +1,5 @@
 {
-  "name": "weekly-report-generator",
+  "name": "weekly-reporter",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -84,12 +84,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hao123-fe/weekly-report-generator.git"
+    "url": "git+https://github.com/hao123-fe/weekly-reporter.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hao123-fe/weekly-report-generator/issues"
+    "url": "https://github.com/hao123-fe/weekly-reporter/issues"
   },
-  "homepage": "https://github.com/hao123-fe/weekly-report-generator#readme"
+  "homepage": "https://github.com/hao123-fe/weekly-reporter#readme"
 }
