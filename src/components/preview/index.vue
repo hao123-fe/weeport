@@ -29,6 +29,7 @@ div
                     span.date(v-text="point.date")
                     p(v-text="point.detail")
             hr
+        footer 本报告由<a hre="https://github.com/hao123-fe/weekly-reporter#readme">周报生成器</a>生成
 </template>
 <script>
 import {n3Row, n3Column, n3Form, n3FormItem, n3Input, n3Button, n3Tabs, n3Tab, n3Datepicker, n3Icon, n3Alert} from 'N3-Components'
@@ -247,4 +248,11 @@ export default {
       padding 0 2px
       border-radius 5px
       margin-right 5px
+  footer
+    text-align right
+    font-size 12px
+    color gray
+    a
+      font-style italic
+      padding 0 3px
 </style>

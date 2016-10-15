@@ -4,7 +4,7 @@
 
 ## Demo
 
-https://hao123-fe.github.io/weekly-report-generator/
+https://hao123-fe.github.io/weekly-reporter/
 
 ## 开发
 
