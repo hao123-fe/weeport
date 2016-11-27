@@ -192,6 +192,9 @@ export default {
 }
 </script>
 <style lang="stylus">
+.report-footer
+  padding 10px 0
+  margin-bottom 10px
 .report-header
   padding 10px 0
   margin-bottom 10px

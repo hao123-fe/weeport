@@ -1,5 +1,9 @@
 <template lang="jade">
 n3-row
+  n3-column(:col="12")
+    div.report-header
+      h4 设置
+n3-row
   n3-column(:col="8", :offset="2")
     n3-form
       n3-form-item(label="周报标题")
