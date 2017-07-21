@@ -1,9 +1,9 @@
 import React from 'react'
-import {NavigationView, SplitViewCommand} from 'react-uwp'
+import {NavigationView, SplitViewCommand, CommandBar, AppBarButton, AppBarSeparator} from 'react-uwp'
 
 const navigationTopNodes = [
-  <SplitViewCommand label="编写周报" icon={"QuickNote"} />,
-  <SplitViewCommand label="查看周报" icon={"CalendarWeek"} />
+  <SplitViewCommand label="本周周报" icon={"QuickNote"} />,
+  <SplitViewCommand label="周报列表" icon={"CalendarWeek"} />
 ];
 
 const navigationBottomNode = [
@@ -22,6 +22,16 @@ export default props => <NavigationView className="full-size"
   >
     <div className="content-container">
       <div className="content">
+        <CommandBar
+          labelPosition="right"
+          primaryCommands={[
+            <AppBarButton icon="Share" label="发送" />,
+            <AppBarSeparator />,
+            <AppBarButton icon="Copy" label="导入" />,
+            <AppBarButton icon="Save" label="保存" />
+          ]}
+          secondaryCommands={false}
+        />
         {props.children}
       </div>
     </div>
