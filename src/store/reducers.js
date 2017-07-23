@@ -7,8 +7,8 @@ const initialState = Immutable.fromJS({
   reportDate: new Date(),
   projects: [],
   currentProject: null,
-  thisWeek: [''],
-  nextWeek: ['']
+  thisWeek: [],
+  nextWeek: []
 })
 
 const editReport = (state = initialState, action) => {
