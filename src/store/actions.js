@@ -1,3 +1,5 @@
+import {save} from '@/lib/storage.js'
+
 export const EDIT_THIS_WEEK = 'EDIT_THIS_WEEK'
 export const EDIT_NEXT_WEEK = 'EDIT_NEXT_WEEK'
 export const CHECK_THIS_WEEK = 'CHECK_THIS_WEEK'
@@ -7,7 +9,8 @@ export const PUSH_TO_NEXT_WEEK = 'PUSH_TO_NEXT_WEEK'
 export const CHANGE_REPORT_DATE = 'CHANGE_REPORT_DATE'
 export const ADD_PROJECT = 'ADD_PROJECT'
 export const CHANGE_CURRENT_PROJECT = 'CHANGE_CURRENT_PROJECT'
-export const UPDATE_CURRENT_PROJECT = 'UPDATE_CURRENT_PROJECT'
+export const UPDATE_PROJECT = 'UPDATE_PROJECT'
+export const CHANGE_REPORT_NAME = 'CHANGE_REPORT_NAME'
 
 export function editThisWeek (value, index) {
   return {
@@ -77,9 +80,20 @@ export function changeCurrentProject (value) {
   }
 }
 
-export function updateCurrentProject (value) {
+export function updateProject (value, index) {
   return {
-    type: UPDATE_CURRENT_PROJECT,
+    type: UPDATE_PROJECT,
+    value,
+    index
+  }
+}
+
+export function changeReportName (value) {
+  save('config', {
+    reportName: value
+  })
+  return {
+    type: CHANGE_REPORT_NAME,
     value
   }
 }

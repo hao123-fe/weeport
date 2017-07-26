@@ -1,10 +1,10 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {editThisWeek, editNextWeek, checkThisWeek, checkNextWeek, pushToThisWeek, pushToNextWeek, changeReportDate, addProject, changeCurrentProject, updateCurrentProject} from '@/store/actions.js'
+import {editThisWeek, editNextWeek, checkThisWeek, checkNextWeek, pushToThisWeek, pushToNextWeek, changeReportDate, addProject, changeCurrentProject, updateProject} from '@/store/actions.js'
 import {week} from '@/lib/util.js'
 import ReportTextBox from './ReportTextBox.js'
 import PlaceHolder from './PlaceHolder.js'
-import {CalendarDatePicker, DatePicker, DropDownMenu, CommandBar, AppBarButton, AppBarSeparator, ListView, IconButton, AutoSuggestBox} from 'react-uwp'
+import {CalendarDatePicker, DatePicker, DropDownMenu, CommandBar, AppBarButton, AppBarSeparator, ListView, IconButton, AutoSuggestBox, Toggle} from 'react-uwp'
 
 class EditReport extends React.Component {
   static contextTypes = {
@@ -12,12 +12,38 @@ class EditReport extends React.Component {
   }
   constructor (props, context) {
     super(props, context)
+    this.getDateRange = this.getDateRange.bind(this)
+  }
+  transDate (date) {
+    const year = date.getFullYear()
+    const month = (month => {
+      let ret = (month + 1).toString()
+      return ret.length === 1 ? '0' + ret : ret
+    })(date.getMonth())
+    const day = (date => {
+      let ret = date.toString()
+      return ret.length === 1 ? '0' + ret : ret
+    })(date.getDate())
+    return `${year}-${month}-${day}`
+  }
+  getDateRange (date) {
+    const startDate = new Date(date)
+    const endDate = new Date(date)
+    const day = (new Date(date)).getDay()
+    startDate.setDate(startDate.getDate() - day)
+    endDate.setDate(endDate.getDate() + 7 - day - 1)
+    return {
+      start: this.transDate(startDate),
+      end: this.transDate(endDate)
+    }
   }
   render () {
     const {theme} = this.context
     const {dispatch} = this.props
     const data = this.props.editReport.toJS()
+    const config = this.props.config.toJS()
     const {thisWeek, nextWeek, reportDate, projects, currentProject} = data
+    const {reportName} = config
     const weekStyle = {
       flex: '1',
       color: theme.baseHigh,
@@ -36,6 +62,7 @@ class EditReport extends React.Component {
       margin: 10,
       outline: "none",
       border: `1px solid ${theme.listAccentLow}`,
+      background: theme.acrylicTexture60.background
     }
     const projectWrapperStyle = {
       display: 'flex',
@@ -51,7 +78,7 @@ class EditReport extends React.Component {
       <div className="flex-box">
         <div style={weekStyle}>
           <div style={headerStyle}>
-            2017 年 7.16 ~ 7.21 （第 {week(reportDate)} 周）周报
+            <b>【{reportName}】</b> {reportDate.getFullYear()}年第{week(reportDate)}周 （<i>{this.getDateRange(reportDate).start}</i>&nbsp;至&nbsp;<i>{this.getDateRange(reportDate).end}</i>）
           </div>
           <CommandBar
             background={theme.acrylicTexture80.background}
@@ -89,7 +116,7 @@ class EditReport extends React.Component {
                   key={index}
                   value={item}
                 />)
-                : <PlaceHolder>尚未添加本周总结。</PlaceHolder>
+                : <PlaceHolder>未添加本周总结</PlaceHolder>
             }
           </div>
         </div>
@@ -108,12 +135,12 @@ class EditReport extends React.Component {
                   key={index}
                   value={item}
                 />)
-                : <PlaceHolder>尚未添加下周计划。</PlaceHolder>
+                : <PlaceHolder>未添加下周计划</PlaceHolder>
             }
           </div>
         </div>
       </div>
-      <div className="flex-box">
+      <div>
         <div style={projectStyle}>
           <div style={headerStyle}>
             <span style={{flex: 1}}>项目进度</span>
@@ -121,7 +148,7 @@ class EditReport extends React.Component {
           </div>
           <div style={projectWrapperStyle}>
             {
-              !projects.length && <PlaceHolder style={{padding: '15px'}}>未添加项目。</PlaceHolder>
+              !projects.length && <PlaceHolder style={{padding: '15px'}}>未添加项目</PlaceHolder>
             }
             {
               !!projects.length && <div style={{
@@ -132,7 +159,21 @@ class EditReport extends React.Component {
                   width: 200
                 }}/>*/}
                 <ListView
-                  listSource={projects.map((item, index) => <a onClick={e => dispatch(changeCurrentProject(index))}>{item.name || '未命名项目'}</a>)}
+                  defaultFocusListIndex={currentProject}
+                  listSource={projects.map((item, index) => <span onClick={e => dispatch(changeCurrentProject(index))}
+                >
+                  <a>
+                  {item.name || '未命名项目'}
+                  </a>
+                  <Toggle
+                    size={12}
+                    background="none"
+                    style={{float: "right"}}
+                    onToggle={e => dispatch(updateProject({open: e}, index))}
+                    onClick={e => e.stopPropagation()}
+                    defaultToggled={item.open}
+                  />
+                </span>)}
                   style={{
                     width: 200,
                     display: 'block',
@@ -151,9 +192,9 @@ class EditReport extends React.Component {
               }}>
                 {
                   currentProject !== null && <div>
-                    <ReportTextBox placeholder="项目名称" value={projects[currentProject].name} onChange={e => dispatch(updateCurrentProject({name: e.target.value}))}/>
-                    <ReportTextBox placeholder="工作描述" value={projects[currentProject].description} onChange={e => dispatch(updateCurrentProject({description: e.target.value}))}/>
-                    <ReportTextBox placeholder="参与人员" value={projects[currentProject].members} onChange={e => dispatch(updateCurrentProject({members: e.target.value}))}/>
+                    <ReportTextBox placeholder="项目名称" value={projects[currentProject].name} onChange={e => dispatch(updateProject({name: e.target.value}))}/>
+                    <ReportTextBox placeholder="工作描述" value={projects[currentProject].description} onChange={e => dispatch(updateProject({description: e.target.value}))}/>
+                    <ReportTextBox placeholder="参与人员" value={projects[currentProject].members} onChange={e => dispatch(updateProject({members: e.target.value}))}/>
                     <ReportTextBox placeholder="流程"/>
                     <CalendarDatePicker defaultDate={new Date()}/>
                     <CalendarDatePicker defaultDate={new Date()}/>
@@ -170,5 +211,6 @@ class EditReport extends React.Component {
 }
 
 export default connect(state => ({
-  editReport: state.editReport
+  editReport: state.editReport,
+  config: state.config
 }))(EditReport)
