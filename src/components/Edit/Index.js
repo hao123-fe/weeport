@@ -71,9 +71,8 @@ class EditReport extends React.Component {
         onToggleShowToast={showSaveToast => this.setState({showSaveToast})}
         closeDelay={3000}
       />
-      <div style={{background: theme.acrylicTexture80.background}}>
+      <div className="command-bar" style={{background: theme.acrylicTexture80.background}}>
         <CommandBar
-          background={theme.acrylicTexture80.background}
           labelPosition="right"
           primaryCommands={[
             // <AppBarButton icon="Copy" label="导入上周" onClick={e => dispatch(importReport())}/>,
@@ -91,7 +90,7 @@ class EditReport extends React.Component {
           secondaryCommands={false}
         />
       </div>
-      <div style={{padding: '20px'}}>
+      <div className="content-with-command-bar">
         <h1 style={{textAlign: 'center'}}>
           <b>【{reportName}】</b> {reportDate.getFullYear()}年第{week(reportDate)}周 （<i>{getDateRange(reportDate).start}</i>&nbsp;至&nbsp;<i>{getDateRange(reportDate).end}</i>）
         </h1>

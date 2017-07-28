@@ -37,14 +37,14 @@ class ReportList extends React.Component {
         onToggleShowToast={showCopyToast => this.setState({showCopyToast})}
         closeDelay={3000}
       />
-      <div style={{background: theme.acrylicTexture80.background}}>
+      <div className="command-bar" style={{background: theme.acrylicTexture80.background}}>
         <CommandBar
           background={theme.acrylicTexture80.background}
           labelPosition="right"
           primaryCommands={[
             <AppBarButton icon="CalendarReply" label="选择周报" />,
             hasReport({thisWeek, nextWeek, projects}) && <AppBarButton icon="Copy" label="复制当前页" onClick={e => {
-              clipIt(this.refs.report.innerHTML + '<div style="text-align: right">本页由 <a href="//github.com/hao123-fe/weeport">周报生成器</a> 生成</div>', {contentType: 'text/html'})
+              clipIt(this.refs.report.innerHTML + '<div style="text-align: right">本页由 <a href="https://github.com/hao123-fe/weeport">周报生成器</a> 生成</div>', {contentType: 'text/html'})
               this.setState({showCopyToast: true})
             }}/>,
             <AppBarButton icon="Save" label="编辑" />
@@ -52,7 +52,7 @@ class ReportList extends React.Component {
           secondaryCommands={false}
         />
       </div>
-      <div ref="report" style={{padding: '20px'}}>
+      <div className="content-with-command-bar" ref="report">
         <Report
             theme={theme}
             reportName={reportName}

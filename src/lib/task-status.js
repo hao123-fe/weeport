@@ -7,15 +7,10 @@ const color = {
 }
 
 export default {
-  PENDING: {text: '待定中', color: color.DEFAULT},
-  PLANNING: {text: '计划中', color: color.DEFAULT},
-  DEMANDING: {text: '需求中', color: color.INFO},
-  DEVELOPING: {text: '开发中', color: color.INFO},
-  TESTING: {text: '已提测', color: color.INFO},
-  DEPLOYING: {text: '待上线', color: color.INFO},
-  DEPLOYED: {text: '已上线', color: color.SUCCESS},
-  EXCUTING: {text: '执行中', color: color.INFO},
-  ENDED: {text: '已终止', color: color.DANGER},
+  PENDING: {text: '等待中', color: color.DEFAULT},
+  TODO: {text: '计划中', color: color.INFO},
+  DOING: {text: '执行中', color: color.INFO},
+  DONE: {text: '完成', color: color.SUCCESS},
   DELAY: {text: '已延期', color: color.WARNING},
-  COMPLETED: {text: '已完成', color: color.SUCCESS}
+  CANCELED: {text: '已取消', color: color.DANGER}
 }

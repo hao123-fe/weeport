@@ -102,18 +102,18 @@ export default props => <table className="report-content" style={{
   {
     props.projects.length ? <tbody>
       <tr>
-        <Td>项目</Td>
-        <Td>项目内容</Td>
-        <Td>人员</Td>
-        <Td>分解</Td>
-        <Td colSpan={2}>计划时间</Td>
-        <Td>状态</Td>
-        <Td>备注</Td>
+        <Th>项目</Th>
+        <Th>项目内容</Th>
+        <Th>人员</Th>
+        <Th>分解</Th>
+        <Th colSpan={2}>计划时间</Th>
+        <Th>状态</Th>
+        <Th>备注</Th>
       </tr>
     </tbody> : null
   }
   {
-    props.projects.map((project, index) => {
+    props.projects.filter(project => project.open).map((project, index) => {
       const steps = project.steps || []
       return <tbody key={index}>
         {
@@ -121,11 +121,11 @@ export default props => <table className="report-content" style={{
             {!index && <Td rowSpan={steps.length}>{project.name}</Td>}
             {!index && <Td rowSpan={steps.length}>{project.description}</Td>}
             {!index && <Td rowSpan={steps.length}>{project.members}</Td>}
-            <Td rowSpan={steps}>{project.steps[index].name}</Td>
-            <Td rowSpan={steps}>{project.steps[index].start}</Td>
-            <Td rowSpan={steps}>{project.steps[index].end}</Td>
-            <Td rowSpan={steps}>{project.steps[index].state}</Td>
-            <Td rowSpan={steps}>{project.note}</Td>
+            <Td>{project.steps[index].name}</Td>
+            <Td>{project.steps[index].start}</Td>
+            <Td>{project.steps[index].end}</Td>
+            <Td>{project.steps[index].state}</Td>
+            {!index && <Td rowSpan={steps.length}>{project.note}</Td>}
           </tr>)
         }
       </tbody>
