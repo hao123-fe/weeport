@@ -22,3 +22,34 @@ export const week = date => {
   var days = (diff + first.getDay())
   return Math.floor(days / 7).toString()
 }
+
+export const transDate = date => {
+  const year = date.getFullYear()
+  const month = (month => {
+    let ret = (month + 1).toString()
+    return ret.length === 1 ? '0' + ret : ret
+  })(date.getMonth())
+  const day = (date => {
+    let ret = date.toString()
+    return ret.length === 1 ? '0' + ret : ret
+  })(date.getDate())
+  return `${year}-${month}-${day}`
+}
+
+export const getDateRange = date => {
+  const startDate = new Date(date)
+  const endDate = new Date(date)
+  const day = (new Date(date)).getDay()
+  startDate.setDate(startDate.getDate() - day)
+  endDate.setDate(endDate.getDate() + 7 - day - 1)
+  return {
+    start: transDate(startDate),
+    end: transDate(endDate)
+  }
+}
+
+export const hasReport = props => !(
+  !props.thisWeek.length
+  && !props.nextWeek.length
+  && !props.projects.length
+)
