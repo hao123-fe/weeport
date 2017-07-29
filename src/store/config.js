@@ -1,16 +1,14 @@
 import Immutable from 'immutable'
 import {load} from '@/lib/storage.js'
-import {CHANGE_REPORT_NAME} from './actions'
-const initialState = Immutable.fromJS({
-  reportName: load('config').weeport || '研发周报'
-})
+import {CHANGE_CONFIG} from './actions'
+
+const initialState = Immutable.fromJS(load('config'))
 
 export default (state = initialState, action) => {
-  const {type, value} = action
+  const {type, value, config} = action
   switch (type) {
-    case CHANGE_REPORT_NAME:
-      // console.log(state.updateIn(['config', 'reportName'], val => value).toJS())
-      return state.updateIn(['reportName'], val => value)
+    case CHANGE_CONFIG:
+      return state.update(config.key, val => config.value)
     default:
       return state
   }
