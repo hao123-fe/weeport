@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {changeReportName} from '@/store/actions.js'
+import {changeConfig} from '@/store/actions.js'
 import {TextBox} from 'react-uwp'
 
 class Settings extends React.Component {
@@ -10,9 +10,10 @@ class Settings extends React.Component {
   render () {
     const {dispatch, config} = this.props
     const data = config.toJS()
-    const {reportName} = data
+    const {reportName, userName} = data
     return <section>
-      <TextBox value={reportName} onChange={e => dispatch(changeReportName(e.target.value))}/>
+      <TextBox value={reportName} onChange={e => dispatch(changeConfig({key: 'reportName', value: e.target.value}))}/>
+      <TextBox value={userName} onChange={e => dispatch(changeConfig({key: 'userName', value: e.target.value}))}/>
     </section>
   }
 }

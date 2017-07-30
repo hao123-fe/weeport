@@ -1,10 +1,11 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {NavigationView, SplitViewCommand} from 'react-uwp'
 import {Link} from 'react-router-dom'
 
 export default class Navigator extends React.Component {
   static contextTypes = {
-    router: React.PropTypes.object
+    router: PropTypes.object
   }
   constructor () {
     super()
@@ -20,9 +21,9 @@ export default class Navigator extends React.Component {
   render () {
     const {props, go} = this
     const navigationTopNodes = [
-      <SplitViewCommand label="本周周报" onClick={go('/')} icon={"Home"} />,
-      <SplitViewCommand label="编辑周报" onClick={go('/edit')} icon={"Edit"} />,
-      <SplitViewCommand label="周报列表" onClick={go('/list')} icon={"CalendarWeek"} />
+      // <SplitViewCommand label="本周周报" onClick={go('/')} icon={"Home"} />,
+      <SplitViewCommand label="周报列表" onClick={go('/list')} icon={"CalendarWeek"} />,
+      <SplitViewCommand label="编辑周报" onClick={go('/edit')} icon={"Edit"} />
     ]
     const navigationBottomNode = [
       <SplitViewCommand label="设置" onClick={go('/settings')} icon={"Settings"} />,
@@ -37,9 +38,7 @@ export default class Navigator extends React.Component {
         navigationBottomNodes={navigationBottomNode}
       >
       <div className="content-container">
-        <div className="content">
-          {props.children}
-        </div>
+        {props.children}
       </div>
     </NavigationView>
   }
