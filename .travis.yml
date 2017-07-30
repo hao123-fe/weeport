@@ -12,4 +12,4 @@ after_script:
   - git config user.email "o.o@mug.dog"
   - git add .
   - git commit -m "Travis build"
-  - git push --force --quiet "https://${GITHUB_TOKEN}@github.com/Dafrok/vue-baidu-map.git" master:gh-pages
+  - git push --force --quiet "https://${GITHUB_TOKEN}@github.com/hao123-fe/weeport.git" master:gh-pages
