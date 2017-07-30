@@ -4,8 +4,8 @@
   "description": "Weekly report generator",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config ./build/webpack.prod.config.js -p",
-    "dev": "webpack-dev-server --content-base dist --config ./build/webpack.dev.config.js --hot --inline"
+    "build": "webpack --config ./build/webpack.config.js -p",
+    "dev": "webpack-dev-server --content-base dist --config ./build/webpack.config.js --hot --inline"
   },
   "repository": {
     "type": "git",

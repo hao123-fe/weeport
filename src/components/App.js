@@ -14,11 +14,14 @@ export default class App extends React.Component {
     super()
   }
   render () {
+    const date = new Date()
     return <Router>
       <UwpContainer>
-        <Route exact path="/" component={Home}/>
-        <Route path="/edit" component={Edit}/>
-        <Route path="/list" component={List}/>
+        <Route exact path="/" component={Edit}/>
+        <Route path="/edit/:id" component={Edit}/>
+        <Route path="/list/:id" component={List}/>
+        <Route exact path="/edit" component={Edit}/>
+        <Route exact path="/list" component={List}/>
         <Route path="/settings" component={Settings}/>
         <Route path="/help" component={Help}/>
       </UwpContainer>

@@ -15,9 +15,12 @@ import {
   CHANGE_REPORT_DATE,
   ADD_PROJECT,
   CHANGE_CURRENT_PROJECT,
-  UPDATE_PROJECT
+  UPDATE_PROJECT,
+  REMOVE_STEP,
+  SYNC_LAST_WEEK
 } from './actions'
-import {focusNextInput, focusPrevInput} from '@/lib/util.js' 
+import {focusNextInput, focusPrevInput, week} from '@/lib/util.js' 
+import {load} from '@/lib/storage.js' 
 
 const initialState = Immutable.fromJS({
   reportDate: new Date(),
@@ -81,7 +84,7 @@ export default (state = initialState, action) => {
       return state
     case LOAD_REPORT:
       return state
-        .update('reportDate', val => Immutable.fromJS(value.date))
+        .update('reportDate', val => Immutable.fromJS(value.reportDate))
         .update('projects', val => Immutable.fromJS(value.projects || []))
         .update('thisWeek', val => Immutable.fromJS(value.thisWeek || []))
         .update('nextWeek', val => Immutable.fromJS(value.nextWeek || []))
@@ -104,6 +107,15 @@ export default (state = initialState, action) => {
         start: new Date(),
         end: new Date()
       }))))
+    case REMOVE_STEP:
+      return state.updateIn(['projects', state.get('currentProject'), 'steps'], val => val.splice(index, 1))
+    case SYNC_LAST_WEEK:
+      const date = new Date(new Date(state.get('reportDate')) - 7 * 24 * 3600 * 1000)
+      const lastWeekData = load('reports')[`${date.getFullYear()}_${week(date)}`] || {}
+      console.log(date, lastWeekData)
+      return state
+        .update('projects', val => lastWeekData.projects || [])
+        .update('thisWeek', val => lastWeekData.nextWeek || [])
     default:
       return state
   }

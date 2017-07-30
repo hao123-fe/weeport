@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
-import {addStep, initStep, updateStep, editThisWeek, editNextWeek, checkThisWeek, checkNextWeek, pushToThisWeek, pushToNextWeek, changeReportDate, addProject, changeCurrentProject, updateProject, saveReport, loadReport, importReport} from '@/store/actions.js'
+import {addStep, initStep, updateStep, removeStep, syncLastWeek, editThisWeek, editNextWeek, checkThisWeek, checkNextWeek, pushToThisWeek, pushToNextWeek, changeReportDate, addProject, changeCurrentProject, updateProject, saveReport, loadReport, importReport} from '@/store/actions.js'
 import {week, getDateRange, getDate} from '@/lib/util.js'
 import taskGroup, {tasks} from '@/lib/tasks.js'
 import ReportTextBox from './ReportTextBox.js'
@@ -39,17 +39,25 @@ class EditReport extends React.Component {
     this.save = this.save.bind(this)
   }
   componentDidMount () {
-    const {dispatch} = this.props
-    dispatch(loadReport())
+    const {dispatch, match} = this.props
+    dispatch(loadReport(match.params.id))
     document.addEventListener('keydown', this.save)
   }
   componentWillUnmount () {
     document.removeEventListener('keydown', this.save)
   }
+  componentWillReceiveProps (nextProps) {
+    const {dispatch, match} = this.props
+    const id = nextProps.match.params.id
+    if (match.params.id !== id) {
+      dispatch(loadReport(id))
+    }
+  }
   save (e) {
     const {dispatch} = this.props
     const {thisWeek, nextWeek, projects} = this.props.editReport.toJS()
-    if (e.ctrlKey && e.keyCode === 83) {
+    if ((e.ctrlKey && e.keyCode === 83) || !e.keyCode) {
+      e.preventDefault()
       this.setState({'showSaveToast': true})
       dispatch(saveReport({
         thisWeek,
@@ -118,7 +126,8 @@ class EditReport extends React.Component {
           primaryCommands={[
             // <AppBarButton icon="Copy" label="导入上周" onClick={e => dispatch(importReport())}/>,
             // <AppBarSeparator />,
-            <AppBarButton icon="Save" label="保存" onClick={this.save}/>
+            <AppBarButton icon="Save" label="保存" onClick={this.save}/>,
+            <AppBarButton icon="Sync" label="同步上周" onClick={e => dispatch(syncLastWeek())}/>
           ]}
           secondaryCommands={false}
         />
@@ -236,7 +245,7 @@ class EditReport extends React.Component {
                               itemHeight={28}
                               onChangeValue={value => dispatch(updateStep({key: 'state', index, value}))}
                             />
-                            <IconButton size={32} className="edit-project-icon-button">Delete</IconButton>
+                            <IconButton size={32} className="edit-project-icon-button" onClick={e => dispatch(removeStep(index))}>Delete</IconButton>
                           </div>
                           <div>
                             <div className="flex-box">

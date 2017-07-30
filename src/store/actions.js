@@ -18,6 +18,8 @@ export const IMPORT_REPORT = 'IMPORT_REPORT'
 export const ADD_STEP = 'ADD_STEP'
 export const UPDATE_STEP = 'UPDATE_STEP'
 export const INIT_STEP = 'INIT_STEP'
+export const REMOVE_STEP = 'REMOVE_STEP'
+export const SYNC_LAST_WEEK = 'SYNC_LAST_WEEK'
 
 export function editThisWeek (value, index) {
   return {
@@ -113,16 +115,17 @@ export function saveReport (report, date = new Date()) {
   }
 }
 
-export function loadReport (date = new Date()) {
-  const report = load('reports')[`${date.getFullYear()}_${week(date)}`] || {};
-  const {thisWeek, nextWeek, projects} = report 
+export function loadReport (id) {
+  const reportDate = id ? new Date(id) : new Date()
+  const report = load('reports')[`${reportDate.getFullYear()}_${week(reportDate)}`] || {};
+  const {thisWeek, nextWeek, projects} = report
   return {
     type: LOAD_REPORT,
     value: {
       thisWeek,
       nextWeek,
       projects,
-      date
+      reportDate
     }
   }
 }
@@ -149,5 +152,18 @@ export function updateStep (value) {
 export function initStep (value) {
   return {
     type: INIT_STEP
+  }
+}
+
+export function removeStep (index) {
+  return {
+    type: REMOVE_STEP,
+    index
+  }
+}
+
+export function syncLastWeek () {
+  return {
+    type: SYNC_LAST_WEEK
   }
 }

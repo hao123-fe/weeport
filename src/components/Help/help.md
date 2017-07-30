@@ -14,10 +14,11 @@ Weeport 是一个帮助您快速完成周报编辑，免去排版烦恼的 WEB �
 
 ### 编辑周报
 
-- 当『本周周报』和『下周周报』当前编辑条目为空时，按下 `Backspace` 键可以彻底删除该条目。
-- 当『本周周报』和『下周周报』当前编辑条目不为空时，按下 `Enter` 键可以在当前条目下新增一个条目。
+- 当『本周总结』和『下周计划』当前编辑条目为空时，按下 `Backspace` 键可以彻底删除该条目。
+- 当『本周总结』和『下周计划』当前编辑条目不为空时，按下 `Enter` 键可以在当前条目下新增一个条目。
 - 按下 `Ctrl + S` 可以快速保存当前周报。
 - 点击『项目进度』中的『初始化流程』按钮时，您的项目流程将被重置为 5 个常用流程。
+- 『导入上周』功能可以将上周的『下周计划』和『项目进度』数据分别导入到本周的『本周总结』和『项目进度』中，免去重复创建条目的繁琐步骤。
 
 ### 设置
 
@@ -27,8 +28,8 @@ Weeport 是一个帮助您快速完成周报编辑，免去排版烦恼的 WEB �
 
 ### 协议
 
-<a href="https://opensource.org/licenses/MIT">MIT 许可证</a>
+[MIT 许可证](https://opensource.org/licenses/MIT)
 
 ### 版权
 
-版权所有 (c) 2017-至今 <a href="https://github.com/Dafrok">Dafrok</a>@<a href="https://github.com/hao123-fe">hao123-fe</a>
+版权所有 (c) 2017-至今 [Dafrok](https://github.com/Dafrok)@[hao123-fe](https://github.com/hao123-fe)

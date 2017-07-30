@@ -63,7 +63,7 @@ export default props => <table className="report-content" style={{
     <tr>
       <Th colSpan={8}>
         <h1 style={{margin: 0, padding: 0}}>
-          {props.reportName} - {props.userName}
+          【{props.reportName}】 {props.userName}
         </h1>
         <div>
           {props.date.getFullYear()}年第{week(props.date)}周 <i>{getDateRange(props.date).start}</i>&nbsp;至&nbsp;<i>{getDateRange(props.date).end}</i>
