@@ -1,5 +1,22 @@
 import Immutable from 'immutable'
-import {SAVE_REPORT, LOAD_REPORT, IMPORT_REPORT, EDIT_THIS_WEEK, EDIT_NEXT_WEEK, ADD_STEP, UPDATE_STEP, CHECK_THIS_WEEK, CHECK_NEXT_WEEK, PUSH_TO_THIS_WEEK, PUSH_TO_NEXT_WEEK, CHANGE_REPORT_DATE, ADD_PROJECT, CHANGE_CURRENT_PROJECT, UPDATE_PROJECT} from './actions'
+import {
+  SAVE_REPORT,
+  LOAD_REPORT,
+  IMPORT_REPORT,
+  EDIT_THIS_WEEK,
+  EDIT_NEXT_WEEK,
+  ADD_STEP,
+  INIT_STEP,
+  UPDATE_STEP,
+  CHECK_THIS_WEEK,
+  CHECK_NEXT_WEEK,
+  PUSH_TO_THIS_WEEK,
+  PUSH_TO_NEXT_WEEK,
+  CHANGE_REPORT_DATE,
+  ADD_PROJECT,
+  CHANGE_CURRENT_PROJECT,
+  UPDATE_PROJECT
+} from './actions'
 import {focusNextInput, focusPrevInput} from '@/lib/util.js' 
 
 const initialState = Immutable.fromJS({
@@ -52,6 +69,7 @@ export default (state = initialState, action) => {
         name: '',
         description: '',
         members: '',
+        note: '',
         steps: [],
         open: true
       })))
@@ -79,6 +97,13 @@ export default (state = initialState, action) => {
       return state.updateIn(['projects', state.get('currentProject'), 'steps'], val => val ? val.push(Immutable.fromJS(newStep)) : Immutable.fromJS([newStep]))
     case UPDATE_STEP:
       return state.updateIn(['projects', state.get('currentProject'), 'steps', value.index, value.key], val => value.value)
+    case INIT_STEP:
+      return state.updateIn(['projects', state.get('currentProject'), 'steps'], val => Immutable.fromJS(['需求', '开发', '联调', '测试', '上线'].map(name => ({
+        name,
+        state: '',
+        start: new Date(),
+        end: new Date()
+      }))))
     default:
       return state
   }

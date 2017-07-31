@@ -19,6 +19,11 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.md$/,
+        use: ['html-loader', 'markdown-loader'],
+        exclude: /node_modules/
+      },
+      {
         test: /\.js$/,
         use: ['babel-loader'],
         exclude: /node_modules/

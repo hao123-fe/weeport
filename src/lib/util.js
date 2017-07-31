@@ -36,6 +36,11 @@ export const transDate = date => {
   return `${year}-${month}-${day}`
 }
 
+export const getDate = date => {
+  const d = new Date(date)
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
+}
+
 export const getDateRange = date => {
   const startDate = new Date(date)
   const endDate = new Date(date)

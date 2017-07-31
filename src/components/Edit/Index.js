@@ -1,11 +1,31 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
-import {addStep, updateStep, editThisWeek, editNextWeek, checkThisWeek, checkNextWeek, pushToThisWeek, pushToNextWeek, changeReportDate, addProject, changeCurrentProject, updateProject, saveReport, loadReport, importReport} from '@/store/actions.js'
-import {week, getDateRange} from '@/lib/util.js'
+import {addStep, initStep, updateStep, editThisWeek, editNextWeek, checkThisWeek, checkNextWeek, pushToThisWeek, pushToNextWeek, changeReportDate, addProject, changeCurrentProject, updateProject, saveReport, loadReport, importReport} from '@/store/actions.js'
+import {week, getDateRange, getDate} from '@/lib/util.js'
+import taskGroup, {tasks} from '@/lib/tasks.js'
 import ReportTextBox from './ReportTextBox.js'
 import PlaceHolder from './PlaceHolder.js'
-import {Toast, CalendarDatePicker, DatePicker, DropDownMenu, CommandBar, AppBarButton, AppBarSeparator, ListView, IconButton, AutoSuggestBox, Toggle, Button} from 'react-uwp'
+import {TextBox, Toast, CalendarDatePicker, DropDownMenu, CommandBar, AppBarButton, AppBarSeparator, ListView, IconButton, AutoSuggestBox, Toggle, Button} from 'react-uwp'
+
+class DatePicker extends React.Component {
+  static contextTypes = {
+    theme: PropTypes.object
+  }
+  constructor () {
+    super()
+  }
+  componentDidMount () {
+    const $el = ReactDOM.findDOMNode(this)
+    $el.children[0].style.width = 'auto'
+    $el.children[1].style.background = this.context.theme.altHigh
+  }
+  render () {
+    const {props} = this
+    return <CalendarDatePicker {...props} />
+  }
+}
 
 class EditReport extends React.Component {
   static contextTypes = {
@@ -16,10 +36,27 @@ class EditReport extends React.Component {
     this.state = {
       showSaveToast: false
     }
+    this.save = this.save.bind(this)
   }
   componentDidMount () {
     const {dispatch} = this.props
     dispatch(loadReport())
+    document.addEventListener('keydown', this.save)
+  }
+  componentWillUnmount () {
+    document.removeEventListener('keydown', this.save)
+  }
+  save (e) {
+    const {dispatch} = this.props
+    const {thisWeek, nextWeek, projects} = this.props.editReport.toJS()
+    if (e.ctrlKey && e.keyCode === 83) {
+      this.setState({'showSaveToast': true})
+      dispatch(saveReport({
+        thisWeek,
+        nextWeek,
+        projects
+      }))
+    }
   }
   render () {
     const {theme} = this.context
@@ -36,8 +73,12 @@ class EditReport extends React.Component {
       fontWeight: "lighter",
       margin: 10,
       outline: "none",
-      border: `1px solid ${theme.listAccentLow}`,
+      border: `1px solid ${theme.listAccentMedium}`,
       background: theme.acrylicTexture60.background
+    }
+    const h3Style = {
+      borderBottom: `2px solid ${theme.listAccentLow}`,
+      marginTop: '5px'
     }
     const stepButtonStyle = {
       margin: '10px 10px 10px 0'
@@ -49,7 +90,7 @@ class EditReport extends React.Component {
       fontWeight: "lighter",
       margin: 10,
       outline: "none",
-      border: `1px solid ${theme.listAccentLow}`,
+      border: `1px solid ${theme.listAccentMedium}`,
       background: theme.acrylicTexture60.background
     }
     const projectWrapperStyle = {
@@ -60,7 +101,7 @@ class EditReport extends React.Component {
     const headerStyle = {
       display: 'flex',
       padding: '5px 10px',
-      background: theme.listAccentLow
+      background: theme.listAccentMedium
     }
     return <section style={{width: '100%'}}>
       <Toast
@@ -77,15 +118,7 @@ class EditReport extends React.Component {
           primaryCommands={[
             // <AppBarButton icon="Copy" label="导入上周" onClick={e => dispatch(importReport())}/>,
             // <AppBarSeparator />,
-            <AppBarButton icon="Save" label="保存" onClick={e => {
-                this.setState({'showSaveToast': true})
-                dispatch(saveReport({
-                  thisWeek,
-                  nextWeek,
-                  projects
-                }))
-              }
-            }/>
+            <AppBarButton icon="Save" label="保存" onClick={this.save}/>
           ]}
           secondaryCommands={false}
         />
@@ -186,25 +219,39 @@ class EditReport extends React.Component {
                 }}>
                   {
                     currentProject !== null && <div>
-                      <h3>基本信息</h3>
+                      <h3 style={h3Style}>基本信息</h3>
                       <ReportTextBox placeholder="项目名称" value={projects[currentProject].name} onChange={e => dispatch(updateProject({key: 'name', value: e.target.value}))}/>
                       <ReportTextBox placeholder="工作描述" value={projects[currentProject].description} onChange={e => dispatch(updateProject({key: 'description', value: e.target.value}))}/>
                       <ReportTextBox placeholder="参与人员" value={projects[currentProject].members} onChange={e => dispatch(updateProject({key: 'members', value: e.target.value}))}/>
-                      <h3>流程</h3>
+                      <ReportTextBox placeholder="备注" value={projects[currentProject].note} onChange={e => dispatch(updateProject({key: 'note', value: e.target.value}))}/>
+                      <h3 style={h3Style}>流程分解</h3>
                       {
-                        (projects[currentProject].steps || []).map((step, index) => <div key={index}>
-                          <ReportTextBox placeholder="流程" value={step.name} onChange={e => dispatch(updateStep({key: 'name', index, value: e.target.value}))}/>
-                          <ReportTextBox placeholder="状态" value={step.state} onChange={e => dispatch(updateStep({key: 'state', index, value: e.target.value}))}/>
-                          <ReportTextBox placeholder="开始时间" value={step.start} onChange={e => dispatch(updateStep({key: 'start', index, value: e.target.value}))}/>
-                          <ReportTextBox placeholder="结束时间" value={step.end} onChange={e => dispatch(updateStep({key: 'end', index, value: e.target.value}))}/>
-                          {/*
-                            <CalendarDatePicker defaultDate={step.start} onChangeDate={e => dispatch(updateStep({key: 'start', index, value: e}))}/>
-                            <CalendarDatePicker defaultDate={step.end} onChangeDate={e => dispatch(updateStep({key: 'end', index, value: e}))}/>
-                          */}
+                        (projects[currentProject].steps || []).map((step, index) => <div key={index} style={{padding: 10, borderBottom: `1px dashed ${theme.listAccentLow}`}}>
+                          <div className="flex-box">
+                            <TextBox style={{flex: 1, margin: '5px 10px 5px 0'}} background={theme.acrylicTexture80.background} placeholder="流程名称" value={step.name} onChange={e => dispatch(updateStep({key: 'name', index, value: e.target.value}))}/>
+                            <DropDownMenu
+                              style={{margin: '5px 0'}}
+                              defaultValue={!~taskGroup.indexOf(step.state) ? taskGroup[0] : step.state}
+                              values={taskGroup}
+                              itemHeight={28}
+                              onChangeValue={value => dispatch(updateStep({key: 'state', index, value}))}
+                            />
+                            <IconButton size={32} className="edit-project-icon-button">Delete</IconButton>
+                          </div>
+                          <div>
+                            <div className="flex-box">
+                              <label style={{height: '32px', lineHeight: '32px', margin: '5px 10px 5px 0'}}>开始日期：</label>
+                              <DatePicker value={getDate(step.start || null)} style={{margin: '5px 0', flex: 1}} onChangeDate={e => dispatch(updateStep({key: 'start', index, value: e}))}/>
+                            </div>
+                            <div className="flex-box">
+                              <label style={{height: '32px', lineHeight: '32px', margin: '5px 10px 5px 0'}}>结束日期：</label>
+                              <DatePicker value={getDate(step.end || null)} style={{margin: '5px 0', flex: 1}} onChangeDate={e => dispatch(updateStep({key: 'end', index, value: e}))}/>
+                            </div>
+                          </div>
                         </div>)
                       }
-                      {/*<Button style={stepButtonStyle}>生成常规流程</Button>*/}
-                      <Button style={stepButtonStyle} onClick={e => dispatch(addStep())}>添加新流程</Button>
+                      <Button style={stepButtonStyle} background={theme.listAccentMedium} onClick={e => dispatch(addStep())}>添加新流程</Button>
+                      <Button style={stepButtonStyle} onClick={e => dispatch(initStep())}>初始化流程</Button>
                     </div>
                   }
                 </div>

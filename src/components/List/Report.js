@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {week, getDateRange, hasReport} from '@/lib/util.js'
+import taskGroup, {tasks} from '@/lib/tasks.js'
+import {week, getDateRange, hasReport, getDate} from '@/lib/util.js'
 
 class Th extends React.Component {
   static contextTypes = {
@@ -42,6 +43,8 @@ class Td extends React.Component {
       rowSpan
     }
     return <td {...attrs} style={{
+      backgroundColor: props.bgColor,
+      color: props.color,
       padding: '10px',
       textAlign: props.textAlign,
       border: `1px solid ${theme.listAccentLow}`
@@ -122,9 +125,9 @@ export default props => <table className="report-content" style={{
             {!index && <Td rowSpan={steps.length}>{project.description}</Td>}
             {!index && <Td rowSpan={steps.length}>{project.members}</Td>}
             <Td>{project.steps[index].name}</Td>
-            <Td>{project.steps[index].start}</Td>
-            <Td>{project.steps[index].end}</Td>
-            <Td>{project.steps[index].state}</Td>
+            <Td>{getDate(project.steps[index].start)}</Td>
+            <Td>{getDate(project.steps[index].end)}</Td>
+            <Td color={tasks[project.steps[index].state] && tasks[project.steps[index].state].color}>{project.steps[index].state}</Td>
             {!index && <Td rowSpan={steps.length}>{project.note}</Td>}
           </tr>)
         }

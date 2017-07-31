@@ -3,13 +3,18 @@ const initData = {
   reports: []
 }
 
+let storage = null
+
 const getData = () => {
-  const weeport = localStorage.getItem('weeport')
+  if (!storage) {
+    storage = JSON.parse(localStorage.getItem('weeport'))
+  }
+  const weeport = storage
   if (!weeport) {
     localStorage.setItem('weeport', JSON.stringify(initData))
     return initData
   } else {
-    return JSON.parse(weeport)
+    return storage
   }
 }
 

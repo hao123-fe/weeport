@@ -6,7 +6,7 @@ import Report from './Report.js'
 import clipIt from 'clip-it'
 import {loadReport} from '@/store/actions'
 import {hasReport} from '@/lib/util.js'
-import {CommandBar, AppBarButton, AppBarSeparator, Toast} from 'react-uwp'
+import {CalendarView, ContentDialog, CommandBar, AppBarButton, AppBarSeparator, Toast} from 'react-uwp'
 
 class ReportList extends React.Component {
   static contextTypes = {

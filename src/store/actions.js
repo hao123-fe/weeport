@@ -17,6 +17,7 @@ export const LOAD_REPORT = 'LOAD_REPORT'
 export const IMPORT_REPORT = 'IMPORT_REPORT'
 export const ADD_STEP = 'ADD_STEP'
 export const UPDATE_STEP = 'UPDATE_STEP'
+export const INIT_STEP = 'INIT_STEP'
 
 export function editThisWeek (value, index) {
   return {
@@ -142,5 +143,11 @@ export function updateStep (value) {
   return {
     value,
     type: UPDATE_STEP
+  }
+}
+
+export function initStep (value) {
+  return {
+    type: INIT_STEP
   }
 }
