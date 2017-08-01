@@ -46,9 +46,6 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, '../src/template/index.html')
-    }),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"development"'
     })
   ]
 }
