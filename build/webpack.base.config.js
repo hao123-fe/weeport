@@ -1,5 +1,5 @@
 /**
- * @file 开发环境打包配置文件
+ * @file 基础配置文件
  * @author zhangzhuobin
  */
 
