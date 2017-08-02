@@ -132,6 +132,7 @@ class EditReport extends React.Component {
     const headerStyle = {
       display: 'flex',
       padding: '5px 10px',
+      overflow: 'hidden',
       background: theme.listAccentMedium
     }
     return <section style={{width: '100%'}}>
