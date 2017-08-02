@@ -112,10 +112,10 @@ export default (state = initialState, action) => {
     case SYNC_LAST_WEEK:
       const date = new Date(new Date(state.get('reportDate')) - 7 * 24 * 3600 * 1000)
       const lastWeekData = load('reports')[`${date.getFullYear()}_${week(date)}`] || {}
-      console.log(date, lastWeekData)
       return state
-        .update('projects', val => lastWeekData.projects || [])
-        .update('thisWeek', val => lastWeekData.nextWeek || [])
+        .update('projects', val => Immutable.fromJS(lastWeekData.projects || []))
+        .update('thisWeek', val => Immutable.fromJS(lastWeekData.thisWeek || []))
+        .update('nextWeek', val => Immutable.fromJS(lastWeekData.nextWeek || []))
     default:
       return state
   }
