@@ -19,8 +19,8 @@ import {
   REMOVE_STEP,
   SYNC_LAST_WEEK
 } from './actions'
-import {focusNextInput, focusPrevInput, week} from '@/lib/util.js' 
-import {load} from '@/lib/storage.js' 
+import {focusNextInput, focusPrevInput, week} from '@/lib/util.js'
+import {load} from '@/lib/storage.js'
 
 const initialState = Immutable.fromJS({
   reportDate: new Date(),
@@ -31,14 +31,14 @@ const initialState = Immutable.fromJS({
 })
 
 export default (state = initialState, action) => {
-  const {type, index, value, date, e} = action
+  const {type, index, value, e} = action
   switch (type) {
     case EDIT_THIS_WEEK:
-      return state.updateIn(['thisWeek', index], val => value)  
+      return state.updateIn(['thisWeek', index], val => value)
     case EDIT_NEXT_WEEK:
       return state.updateIn(['nextWeek', index], val => value)
     case PUSH_TO_THIS_WEEK:
-      return state.update('thisWeek', val => val.push(''))  
+      return state.update('thisWeek', val => val.push(''))
     case PUSH_TO_NEXT_WEEK:
       return state.update('nextWeek', val => val.push(''))
     case CHECK_THIS_WEEK:

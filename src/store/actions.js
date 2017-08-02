@@ -78,7 +78,7 @@ export function changeReportDate (date) {
 
 export function addProject () {
   return {
-    type: ADD_PROJECT,
+    type: ADD_PROJECT
   }
 }
 
@@ -117,7 +117,7 @@ export function saveReport (report, date = new Date()) {
 
 export function loadReport (id) {
   const reportDate = id ? new Date(id) : new Date()
-  const report = load('reports')[`${reportDate.getFullYear()}_${week(reportDate)}`] || {};
+  const report = load('reports')[`${reportDate.getFullYear()}_${week(reportDate)}`] || {}
   const {thisWeek, nextWeek, projects} = report
   return {
     type: LOAD_REPORT,

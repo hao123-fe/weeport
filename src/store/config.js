@@ -9,7 +9,7 @@ const initialState = Immutable.fromJS({
 })
 
 export default (state = initialState, action) => {
-  const {type, value, config} = action
+  const {type, config} = action
   switch (type) {
     case CHANGE_CONFIG:
       return state.update(config.key, val => config.value)

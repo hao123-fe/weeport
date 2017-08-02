@@ -1,3 +1,5 @@
+const HTMLInputElement = global.HTMLInputElement
+
 export const focusNextInput = $el => {
   setTimeout(() => {
     const $nextEl = $el.nextElementSibling
@@ -10,7 +12,7 @@ export const focusNextInput = $el => {
 export const focusPrevInput = $el => {
   const $nextEl = $el.nextElementSibling
   const $prevEl = $el.previousElementSibling
-  if (!$nextEl || !($nextEl instanceof HTMLInputElement)) {
+  if (!$nextEl || !($nextEl instanceof global.HTMLInputElement)) {
     $prevEl && $prevEl.focus && $prevEl.focus()
   }
 }
@@ -54,7 +56,7 @@ export const getDateRange = date => {
 }
 
 export const hasReport = props => !(
-  !props.thisWeek.length
-  && !props.nextWeek.length
-  && !props.projects.length
+  !props.thisWeek.length &&
+  !props.nextWeek.length &&
+  !props.projects.length
 )

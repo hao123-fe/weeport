@@ -1,14 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import taskGroup, {tasks} from '@/lib/tasks.js'
+import {tasks} from '@/lib/tasks.js'
 import {week, getDateRange, hasReport, getDate} from '@/lib/util.js'
 
 class Th extends React.Component {
   static contextTypes = {
     theme: PropTypes.object
-  }
-  constructor () {
-    super()
   }
   render () {
     const {props} = this
@@ -18,7 +15,7 @@ class Th extends React.Component {
       colSpan,
       rowSpan
     }
-    return <th {...attrs}  style={{
+    return <th {...attrs} style={{
       padding: '5px 10px',
       background: theme.listAccentLow,
       textAlign: props.textAlign,
@@ -31,8 +28,8 @@ class Td extends React.Component {
   static contextTypes = {
     theme: PropTypes.object
   }
-  constructor () {
-    super()
+  static propTypes = {
+    children: PropTypes.Array
   }
   render () {
     const {props} = this
@@ -52,13 +49,13 @@ class Td extends React.Component {
   }
 }
 
-export default props => <table className="report-content" style={{
-    width: '100%',
-    background: 'rgba(0, 0, 0, .5)',
-    borderSpacing: '0',
-    borderCollapse: 'collapse',
-    color: 'white'
-  }}>
+const Component = props => <table className={'report-content'} style={{
+  width: '100%',
+  background: 'rgba(0, 0, 0, .5)',
+  borderSpacing: '0',
+  borderCollapse: 'collapse',
+  color: 'white'
+}}>
   <thead>
     <tr>
       <Th colSpan={8}>
@@ -135,3 +132,14 @@ export default props => <table className="report-content" style={{
     })
   }
 </table>
+
+Component.propTypes = {
+  reportName: PropTypes.String,
+  userName: PropTypes.String,
+  date: PropTypes.Date,
+  thisWeek: PropTypes.Array,
+  nextWeek: PropTypes.Array,
+  projects: PropTypes.Array
+}
+
+export default Component

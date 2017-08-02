@@ -3,6 +3,7 @@ const initData = {
   reports: []
 }
 
+const localStorage = global.localStorage
 let storage = null
 
 const getData = () => {
