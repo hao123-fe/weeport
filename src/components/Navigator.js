@@ -21,12 +21,12 @@ export default class Navigator extends React.Component {
     const {props, go} = this
     const navigationTopNodes = [
       // <SplitViewCommand label="本周周报" onClick={go('/')} icon={"Home"} />,
-      <SplitViewCommand label='周报列表' onClick={go('/list')} icon={'CalendarWeek'} />,
-      <SplitViewCommand label='编辑周报' onClick={go('/edit')} icon={'Edit'} />
+      <SplitViewCommand label={'浏览周报'} onClick={go('/list')} icon={'CalendarWeek'} />,
+      <SplitViewCommand label={'编辑周报'} onClick={go('/edit')} icon={'Edit'} />
     ]
     const navigationBottomNode = [
-      <SplitViewCommand label='设置' onClick={go('/settings')} icon={'Settings'} />,
-      <SplitViewCommand label='帮助' visited onClick={go('/help')} icon={'Help'} />
+      <SplitViewCommand label={'设置'} onClick={go('/settings')} icon={'Settings'} />,
+      <SplitViewCommand label={'帮助'} visited onClick={go('/help')} icon={'Help'} />
     ]
     return <NavigationView className='full-size'
       pageTitle='WEEPORT'
