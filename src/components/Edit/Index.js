@@ -132,7 +132,6 @@ class EditReport extends React.Component {
     const headerStyle = {
       display: 'flex',
       padding: '5px 10px',
-      overflow: 'hidden',
       background: theme.listAccentMedium
     }
     return <section style={{width: '100%'}}>
@@ -251,8 +250,7 @@ class EditReport extends React.Component {
               }
               {
                 !!projects.length && <div style={{
-                  background: theme.acrylicTexture80.background,
-                  minHeight: 400
+                  background: theme.acrylicTexture80.background
                 }}>
                   <ListView
                     defaultFocusListIndex={currentProject}
@@ -286,7 +284,7 @@ class EditReport extends React.Component {
                   background: theme.acrylicTexture60.background
                 }}>
                   {
-                    currentProject !== null && <div>
+                    currentProject !== null ? <div>
                       <h3 style={h3Style}>基本信息</h3>
                       <ReportTextBox placeholder={'项目名称'} value={projects[currentProject].name} onChange={e => dispatch(updateProject({key: 'name', value: e.target.value}))} />
                       <ReportTextBox placeholder={'工作描述'} value={projects[currentProject].description} onChange={e => dispatch(updateProject({key: 'description', value: e.target.value}))} />
@@ -320,7 +318,7 @@ class EditReport extends React.Component {
                       }
                       <Button style={stepButtonStyle} background={theme.listAccentMedium} onClick={e => dispatch(addStep())}>添加新流程</Button>
                       <Button style={stepButtonStyle} onClick={e => this.setState({showInitStepDialog: true})}>初始化流程</Button>
-                    </div>
+                    </div> : <PlaceHolder>请选择一个项目</PlaceHolder>
                   }
                 </div>
               }
