@@ -2,12 +2,30 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
-import {addStep, initStep, updateStep, removeStep, syncLastWeek, editThisWeek, editNextWeek, checkThisWeek, checkNextWeek, pushToThisWeek, pushToNextWeek, addProject, changeCurrentProject, updateProject, saveReport, loadReport} from '@/store/actions.js'
+import {
+  addStep,
+  initStep,
+  updateStep,
+  removeStep,
+  syncLastWeek,
+  editThisWeek,
+  editNextWeek,
+  checkThisWeek,
+  checkNextWeek,
+  pushToThisWeek,
+  pushToNextWeek,
+  addProject,
+  changeCurrentProject,
+  updateProject,
+  removeProject,
+  saveReport,
+  loadReport
+} from '@/store/actions.js'
 import {week, getDateRange, getDate} from '@/lib/util.js'
 import taskGroup from '@/lib/tasks.js'
 import ReportTextBox from './ReportTextBox.js'
 import PlaceHolder from './PlaceHolder.js'
-import {TextBox, Toast, CalendarDatePicker, DropDownMenu, CommandBar, AppBarButton, ListView, IconButton, Toggle, Button} from 'react-uwp'
+import {Tooltip, ContentDialog, TextBox, Toast, CalendarDatePicker, DropDownMenu, CommandBar, AppBarButton, ListView, IconButton, Toggle, Button} from 'react-uwp'
 
 class DatePicker extends React.Component {
   static contextTypes = {
@@ -23,7 +41,6 @@ class DatePicker extends React.Component {
     return <CalendarDatePicker {...props} />
   }
 }
-console.log(PropTypes)
 class EditReport extends React.Component {
   static contextTypes = {
     theme: PropTypes.object
@@ -37,7 +54,10 @@ class EditReport extends React.Component {
   constructor () {
     super()
     this.state = {
-      showSaveToast: false
+      showSaveToast: false,
+      showSyncDialog: false,
+      showRemoveProjectDialog: false,
+      showInitStepDialog: false
     }
     this.save = this.save.bind(this)
   }
@@ -71,7 +91,7 @@ class EditReport extends React.Component {
   }
   render () {
     const {theme} = this.context
-    const {showSaveToast} = this.state
+    const {showSaveToast, showRemoveProjectDialog, showSyncDialog, showInitStepDialog} = this.state
     const {dispatch} = this.props
     const data = this.props.editReport.toJS()
     const config = this.props.config.toJS()
@@ -123,14 +143,42 @@ class EditReport extends React.Component {
         onToggleShowToast={showSaveToast => this.setState({showSaveToast})}
         closeDelay={3000}
       />
+      <ContentDialog
+        statusBarTitle={'警告'}
+        title={'删除项目'}
+        content={'确定删除当前项目？'}
+        defaultShow={showRemoveProjectDialog}
+        primaryButtonText={'删除'}
+        secondaryButtonText={'取消'}
+        primaryButtonAction={e => dispatch(removeProject())}
+        onCloseDialog={e => this.setState({showRemoveProjectDialog: false})}
+      />
+      <ContentDialog
+        statusBarTitle={'警告'}
+        title={'同步上周数据'}
+        content={'同步上周数据后，您当前周报的『本周总结』将会被替换成上周的『下周计划』，『项目进度』将全部替换成上周进行的项目，并且不保留当前的数据，确定进行同步吗？'}
+        defaultShow={showSyncDialog}
+        primaryButtonText={'同步'}
+        secondaryButtonText={'取消'}
+        primaryButtonAction={e => dispatch(syncLastWeek())}
+        onCloseDialog={e => this.setState({showSyncDialog: false})}
+      />
+      <ContentDialog
+        statusBarTitle={'警告'}
+        title={'初始化流程'}
+        content={'初始化项目流程后，当前项目的流程将会被重置为『需求』、『开发』、『联调』、『测试』、『上线』共 5 个阶段，并且不会保留当前的流程数据。确定进行初始化吗？'}
+        defaultShow={showInitStepDialog}
+        primaryButtonText={'初始化'}
+        secondaryButtonText={'取消'}
+        primaryButtonAction={e => dispatch(initStep())}
+        onCloseDialog={e => this.setState({showInitStepDialog: false})}
+      />
       <div className={'command-bar'} style={{background: theme.acrylicTexture80.background}}>
         <CommandBar
           labelPosition={'right'}
           primaryCommands={[
-            // <AppBarButton icon="Copy" label="导入上周" onClick={e => dispatch(importReport())}/>,
-            // <AppBarSeparator />,
             <AppBarButton icon={'Save'} label={'保存'} onClick={this.save} />,
-            <AppBarButton icon={'Sync'} label={'同步上周'} onClick={e => dispatch(syncLastWeek())} />
+            <AppBarButton icon={'Sync'} label={'同步上周'} onClick={e => this.setState({showSyncDialog: true})} />
           ]}
           secondaryCommands={false}
         />
@@ -142,8 +190,10 @@ class EditReport extends React.Component {
         <div className={'flex-box'}>
           <div style={weekStyle}>
             <div style={headerStyle}>
-              <span style={{flex: 1}}>本周总结</span>
-              <IconButton size={20} onClick={e => dispatch(pushToThisWeek())}>Add</IconButton>
+              <span className={'header-text'}>本周总结</span>
+              <Tooltip content={'添加条目（快捷键 Enter 添加 / Backspace 删除）'}>
+                <IconButton size={32} onClick={e => dispatch(pushToThisWeek())}>Add</IconButton>
+              </Tooltip>
             </div>
             <div className={'content-block'}>
               {
@@ -161,8 +211,10 @@ class EditReport extends React.Component {
           </div>
           <div style={weekStyle}>
             <div style={headerStyle}>
-              <span style={{flex: 1}}>下周计划</span>
-              <IconButton size={20} onClick={e => dispatch(pushToNextWeek())}>Add</IconButton>
+              <span className={'header-text'}>下周计划</span>
+              <Tooltip content={'添加条目（快捷键 Enter 添加 / Backspace 删除）'}>
+                <IconButton size={32} onClick={e => dispatch(pushToNextWeek())}>Add</IconButton>
+              </Tooltip>
             </div>
             <div className={'content-block'}>
               {
@@ -182,8 +234,15 @@ class EditReport extends React.Component {
         <div>
           <div style={projectStyle}>
             <div style={headerStyle}>
-              <span style={{flex: 1}}>项目进度</span>
-              <IconButton size={20} onClick={e => dispatch(addProject(e))}>Add</IconButton>
+              <span className={'header-text'}>项目进度</span>
+              {
+                currentProject !== null && <Tooltip content={'删除当前项目'}>
+                  <IconButton size={32} onClick={e => this.setState({showRemoveProjectDialog: true})}>Delete</IconButton>
+                </Tooltip>
+              }
+              <Tooltip content={'添加一个项目'}>
+                <IconButton size={32} onClick={e => dispatch(addProject(e))}>Add</IconButton>
+              </Tooltip>
             </div>
             <div style={projectWrapperStyle}>
               {
@@ -259,7 +318,7 @@ class EditReport extends React.Component {
                         </div>)
                       }
                       <Button style={stepButtonStyle} background={theme.listAccentMedium} onClick={e => dispatch(addStep())}>添加新流程</Button>
-                      <Button style={stepButtonStyle} onClick={e => dispatch(initStep())}>初始化流程</Button>
+                      <Button style={stepButtonStyle} onClick={e => this.setState({showInitStepDialog: true})}>初始化流程</Button>
                     </div>
                   }
                 </div>

@@ -16,6 +16,7 @@ import {
   ADD_PROJECT,
   CHANGE_CURRENT_PROJECT,
   UPDATE_PROJECT,
+  REMOVE_PROJECT,
   REMOVE_STEP,
   SYNC_LAST_WEEK
 } from './actions'
@@ -80,6 +81,10 @@ export default (state = initialState, action) => {
       return state.update('currentProject', val => value)
     case UPDATE_PROJECT:
       return state.updateIn(['projects', value.index === undefined ? state.get('currentProject') : value.index, value.key], val => value.value)
+    case REMOVE_PROJECT:
+      return state
+        .update('projects', val => val.splice(state.get('currentProject'), 1))
+        .update('currentProject', val => null)
     case SAVE_REPORT:
       return state
     case LOAD_REPORT:

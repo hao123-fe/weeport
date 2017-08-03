@@ -63,11 +63,19 @@ class ReportList extends React.Component {
         logoNode={<Icon>CalendarReply</Icon>}
         title={'选择周报日期'}
         showCloseIcon
+        // onMouseLeave={e => this.setState({showDatepickerToast: false})}
       >
-        <CalendarView onChangeDate={e => {
-          this.setState({showDatepickerToast: false})
-          history.push(`/list/${getDate(e)}`)
-        }} />
+        <CalendarView
+          onClick={e => {
+            if (e.target.parentNode.children.length === 42) {
+              this.setState({showDatepickerToast: false})
+              history.push(`/list/${getDate(this.selectedDate)}`)
+            }
+          }}
+          onChangeDate={e => {
+            this.selectedDate = e
+          }}
+        />
       </Toast>
       <Toast
         title={'复制'}

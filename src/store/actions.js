@@ -11,6 +11,7 @@ export const CHANGE_REPORT_DATE = 'CHANGE_REPORT_DATE'
 export const ADD_PROJECT = 'ADD_PROJECT'
 export const CHANGE_CURRENT_PROJECT = 'CHANGE_CURRENT_PROJECT'
 export const UPDATE_PROJECT = 'UPDATE_PROJECT'
+export const REMOVE_PROJECT = 'REMOVE_PROJECT'
 export const CHANGE_CONFIG = 'CHANGE_CONFIG'
 export const SAVE_REPORT = 'SAVE_REPORT'
 export const LOAD_REPORT = 'LOAD_REPORT'
@@ -93,6 +94,12 @@ export function updateProject (value, index) {
   return {
     type: UPDATE_PROJECT,
     value
+  }
+}
+
+export function removeProject () {
+  return {
+    type: REMOVE_PROJECT
   }
 }
 

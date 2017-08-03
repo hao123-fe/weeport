@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 const Component = props => <div {...props} className={'placeholder'}>{props.children}</div>
 
 Component.propTypes = {
-  children: PropTypes.string
+  children: PropTypes.node
 }
 
 export default Component

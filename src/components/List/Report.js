@@ -29,7 +29,7 @@ class Td extends React.Component {
     theme: PropTypes.object
   }
   static propTypes = {
-    children: PropTypes.Array
+    children: PropTypes.node
   }
   render () {
     const {props} = this
@@ -134,12 +134,12 @@ const Component = props => <table className={'report-content'} style={{
 </table>
 
 Component.propTypes = {
-  reportName: PropTypes.String,
-  userName: PropTypes.String,
-  date: PropTypes.Date,
-  thisWeek: PropTypes.Array,
-  nextWeek: PropTypes.Array,
-  projects: PropTypes.Array
+  reportName: PropTypes.string,
+  userName: PropTypes.string,
+  date: PropTypes.object,
+  thisWeek: PropTypes.array,
+  nextWeek: PropTypes.array,
+  projects: PropTypes.array
 }
 
 export default Component
