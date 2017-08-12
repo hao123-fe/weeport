@@ -73,7 +73,7 @@ export default (state = initialState, action) => {
         name: '',
         description: '',
         members: '',
-        note: '',
+        // note: '',
         steps: [],
         open: true
       })))
@@ -100,7 +100,8 @@ export default (state = initialState, action) => {
         name: '未命名流程',
         start: new Date(),
         end: new Date(),
-        state: 'PENDING'
+        state: 'Pending',
+        note: ''
       }
       return state.updateIn(['projects', state.get('currentProject'), 'steps'], val => val ? val.push(Immutable.fromJS(newStep)) : Immutable.fromJS([newStep]))
     case UPDATE_STEP:
@@ -110,7 +111,8 @@ export default (state = initialState, action) => {
         name,
         state: '',
         start: new Date(),
-        end: new Date()
+        end: new Date(),
+        note: ''
       }))))
     case REMOVE_STEP:
       return state.updateIn(['projects', state.get('currentProject'), 'steps'], val => val.splice(index, 1))

@@ -289,12 +289,12 @@ class EditReport extends React.Component {
                       <ReportTextBox placeholder={'项目名称'} value={projects[currentProject].name} onChange={e => dispatch(updateProject({key: 'name', value: e.target.value}))} />
                       <ReportTextBox placeholder={'工作描述'} value={projects[currentProject].description} onChange={e => dispatch(updateProject({key: 'description', value: e.target.value}))} />
                       <ReportTextBox placeholder={'参与人员'} value={projects[currentProject].members} onChange={e => dispatch(updateProject({key: 'members', value: e.target.value}))} />
-                      <ReportTextBox placeholder={'备注'} value={projects[currentProject].note} onChange={e => dispatch(updateProject({key: 'note', value: e.target.value}))} />
                       <h3 style={h3Style}>流程分解</h3>
                       {
                         (projects[currentProject].steps || []).map((step, index) => <div key={index} style={{padding: 10, borderBottom: `1px dashed ${theme.listAccentLow}`}}>
                           <div className={'flex-box'}>
-                            <TextBox style={{flex: 1, margin: '5px 10px 5px 0'}} background={theme.acrylicTexture80.background} placeholder={'流程名称'} value={step.name} onChange={e => dispatch(updateStep({key: 'name', index, value: e.target.value}))} />
+                            <TextBox style={{flex: 0.5, margin: '5px 10px 5px 0'}} background={theme.acrylicTexture80.background} placeholder={'流程名称'} value={step.name} onChange={e => dispatch(updateStep({key: 'name', index, value: e.target.value}))} />
+                            <TextBox style={{flex: 1, margin: '5px 10px 5px 0'}} background={theme.acrylicTexture80.background} placeholder={'备注'} value={step.note} onChange={e => dispatch(updateStep({key: 'note', index, value: e.target.value}))} />
                             <DropDownMenu
                               style={{margin: '5px 0'}}
                               defaultValue={!~taskGroup.indexOf(step.state) ? taskGroup[0] : step.state}
