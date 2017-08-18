@@ -43,6 +43,11 @@ export const getDate = date => {
   return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
 }
 
+export const getSimpleDate = date => {
+  const d = new Date(date)
+  return `${d.getMonth() + 1}.${d.getDate()}`
+}
+
 export const getDateRange = date => {
   const startDate = new Date(date)
   const endDate = new Date(date)

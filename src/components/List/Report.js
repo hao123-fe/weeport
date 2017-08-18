@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {tasks} from '@/lib/tasks.js'
-import {week, getDateRange, hasReport, getDate} from '@/lib/util.js'
+import {week, getDateRange, hasReport, getSimpleDate} from '@/lib/util.js'
 
 class Th extends React.Component {
   static contextTypes = {
@@ -9,17 +9,23 @@ class Th extends React.Component {
   }
   render () {
     const {props} = this
-    const {theme} = this.context
+    // const {theme} = this.context
     const {colSpan, rowSpan} = props
     const attrs = {
       colSpan,
       rowSpan
     }
     return <th {...attrs} style={{
-      padding: '5px 10px',
-      background: theme.listAccentLow,
-      textAlign: props.textAlign,
-      border: `1px solid ${theme.listAccentLow}`
+      // padding: '5px 10px',
+      // background: theme.listAccentLow,
+      backgroundColor: '#f0f0f0',
+      border: '1px solid #ddd',
+      padding: '7px 10px',
+      verticalAlign: 'top',
+      fontFamily: 'times',
+      fontSize: '14px',
+      textAlign: props.textAlign
+      // border: `1px solid ${theme.listAccentLow}`
     }}>{props.children}</th>
   }
 }
@@ -33,28 +39,30 @@ class Td extends React.Component {
   }
   render () {
     const {props} = this
-    const {theme} = this.context
+    // const {theme} = this.context
     const {colSpan, rowSpan} = props
     const attrs = {
       colSpan,
       rowSpan
     }
     return <td {...attrs} style={{
-      backgroundColor: props.bgColor,
-      color: props.color,
-      padding: '10px',
-      textAlign: props.textAlign,
-      border: `1px solid ${theme.listAccentLow}`
-    }}>{this.props.children}</td>
+      border: '1px solid #ddd',
+      padding: '7px 10px',
+      verticalAlign: 'top',
+      fontFamily: 'times',
+      fontSize: '14px',
+      textAlign: props.textAlign
+    }} className={'confluence-td'}>{this.props.children}</td>
   }
 }
 
 const Component = props => <table className={'report-content'} style={{
   width: '100%',
-  background: 'rgba(0, 0, 0, .5)',
-  borderSpacing: '0',
+  background: 'white',
+  color: '#333',
   borderCollapse: 'collapse',
-  color: 'white'
+  borderSpacing: '0',
+  borderColor: 'grey'
 }}>
   <thead>
     <tr>
@@ -75,12 +83,10 @@ const Component = props => <table className={'report-content'} style={{
     props.thisWeek.length ? <tbody>
       <tr>
         <Td colSpan={8}>
-          <h2 style={{margin: 0, padding: 0}}>本周总结</h2>
-          <ol>
-            {
-              props.thisWeek.map((item, index) => <li key={index}>{item}</li>)
-            }
-          </ol>
+          <p><b style={{margin: 0, padding: 0}}>本周总结：</b></p>
+          {
+            props.thisWeek.map((item, index) => <p key={index}>{index + 1}、{item}</p>)
+          }
         </Td>
       </tr>
     </tbody> : null
@@ -89,12 +95,10 @@ const Component = props => <table className={'report-content'} style={{
     props.nextWeek.length ? <tbody>
       <tr>
         <Td colSpan={8}>
-          <h2 style={{margin: 0, padding: 0}}>下周计划</h2>
-          <ol>
-            {
-              props.nextWeek.map((item, index) => <li key={index}>{item}</li>)
-            }
-          </ol>
+          <p><b style={{margin: 0, padding: 0}}>下周计划：</b></p>
+          {
+            props.nextWeek.map((item, index) => <p key={index}>{index + 1}、{item}</p>)
+          }
         </Td>
       </tr>
     </tbody> : null
@@ -117,16 +121,27 @@ const Component = props => <table className={'report-content'} style={{
       const steps = project.steps || []
       return <tbody key={index}>
         {
-          new Array(steps.length).fill().map((row, index) => <tr key={index}>
-            {!index && <Td rowSpan={steps.length}>{project.name}</Td>}
-            {!index && <Td rowSpan={steps.length}>{project.description}</Td>}
-            {!index && <Td rowSpan={steps.length}>{project.members}</Td>}
-            <Td>{project.steps[index].name}</Td>
-            <Td>{getDate(project.steps[index].start)}</Td>
-            <Td>{getDate(project.steps[index].end)}</Td>
-            <Td color={tasks[project.steps[index].state] && tasks[project.steps[index].state].color}>{project.steps[index].state}</Td>
-            {!index && <Td rowSpan={steps.length}>{project.note}</Td>}
-          </tr>)
+          new Array(steps.length).fill().map((row, index) => {
+            const startDate = getSimpleDate(project.steps[index].start)
+            const endDate = getSimpleDate(project.steps[index].end)
+            return <tr key={index}>
+              {!index && <Td rowSpan={steps.length}>{project.name}</Td>}
+              {!index && <Td rowSpan={steps.length}>{project.description}</Td>}
+              {!index && <Td rowSpan={steps.length}>{project.members}</Td>}
+              <Td>{project.steps[index].name}</Td>
+              {
+                startDate === endDate ? <Td colSpan={2}>{getSimpleDate(project.steps[index].start)}</Td> : null
+              }
+              {
+                startDate !== endDate ? <Td>{getSimpleDate(project.steps[index].start)}</Td> : null
+              }
+              {
+                startDate !== endDate ? <Td>{getSimpleDate(project.steps[index].end)}</Td> : null
+              }
+              <Td color={tasks[project.steps[index].state] && tasks[project.steps[index].state].color}>{project.steps[index].state}</Td>
+              <Td>{project.steps[index].note}</Td>
+            </tr>
+          })
         }
       </tbody>
     })
